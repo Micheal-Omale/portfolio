@@ -15,7 +15,7 @@
   const DR = (window.DR = window.DR || {});
 
   const CFG = {
-    flock: { fine: 5, touch: 3 },
+    flock: { fine: 3, touch: 2 }, // a few, so they're a delight rather than weather
     wander: { speed: 62, turn: 2.2, spring: 1.8 },
     wingman: { max: 560, force: 1500, offset: [-54, -34], orbit: 70, idle: 1.1, loop: 0.95 },
     // scrolling: the wingman leaves you and rides a curve tied to scroll position
@@ -294,6 +294,12 @@
           });
         }
       } catch {}
+      // it's a whisper, not a sign: the moment you scroll on, it gets out of the way
+      window.addEventListener("scroll", () => {
+        if (!tipOn) return;
+        tipOn = false;
+        gsap.to(tip, { opacity: 0, scale: 0.92, duration: 0.18, ease: "power2.in", overwrite: true });
+      }, { passive: true });
 
       // fade in once the intro has played
       const layer = { a: 0 };
@@ -309,8 +315,11 @@
         // banking: foreshorten across the wings, and the dipped wing darkens
         ctx.scale(p.s, p.s * (1 - Math.min(0.55, Math.abs(p.bank) * 0.5)));
         const up = p.bank > 0 ? fillB : fillA, down = p.bank > 0 ? fillA : fillB;
+        // the shadow falls where the sun says (screen space), so undo the plane's turn
+        const sun = DR.light?.sun || { x: 0.45, y: 0.85 };
+        const sx = sun.x * 7, sy = sun.y * 7, ch = Math.cos(p.heading), sh = Math.sin(p.heading);
         ctx.save();
-        ctx.translate(3, 5);
+        ctx.translate((sx * ch + sy * sh) / p.s, (sy * ch - sx * sh) / p.s);
         ctx.fillStyle = C.shadow;
         PLANE(ctx); ctx.fill();
         ctx.restore();

@@ -31,7 +31,8 @@
     ScrollTrigger.config({ ignoreMobileResize: true });
 
     const CONFIG = {
-      reel: { slideIn: 1.0, develop: 2.6, hold: 2.6, liftOut: 0.8 },
+      // develop briskly, then hold: the finished print is what people should see
+      reel: { slideIn: 0.9, develop: 1.7, hold: 5.2, liftOut: 0.7 },
       // CSS stand-in for the develop shader on the case-study prints
       develop: {
         from: "brightness(1.75) contrast(0.45) saturate(0) blur(8px)",
@@ -41,10 +42,15 @@
       // work: each case sinks into the pile as the next is laid on top
       pile: { scale: 0.07, shade: 0.16, tilt: [-2.2, 1.8, -1.5, 2.4, -1.9] },
       magnet: { pull: 0.32, settle: 0.9 },
-      tilt: { max: 7, lerp: 0.12 },
       tray: { max: 5, lerp: 0.08 },
       // loading screen: run to `hold` while assets arrive, finish once they're in
-      load: { hold: 86, run: 1.3, finish: 0.45 },
+      load: { hold: 86, run: 1.3, finish: 0.45, threeWait: 4000 },
+      // first visit: the blind tilts open (light through the slats), then rises
+      // prints scroll their live page: hold at the top and bottom, glide between
+      pan: { hold: 0.1, ease: "power1.inOut", lead: 0.25, cover: 0.62, depth: 2.6 },
+      // services: the floating proof print
+      proof: { lerp: 0.14, lean: 9, gap: 28, open: 0.7, develop: 1.2 },
+      blind: { slatPx: 56, tilt: 84, open: 0.9, each: 0.022, raise: 1.0, cords: [0.2, 0.8] },
     };
 
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -83,6 +89,27 @@
     const L0 = CONFIG.load;
     const loading = firstVisit ? gsap.to(load, { v: L0.hold, duration: L0.run, ease: "power2.out", onUpdate: showLoad }) : null;
 
+    // the cover is a venetian blind: slats sized off the viewport, +1px so no hairlines
+    const blind = cover.querySelector(".cover-blind");
+    const slats = [], cords = [];
+    if (firstVisit) {
+      const B = CONFIG.blind;
+      const n = Math.max(9, Math.round(innerHeight / B.slatPx)), h = innerHeight / n;
+      for (let i = 0; i < n; i++) {
+        const s = blind.appendChild(document.createElement("i"));
+        s.className = "slat";
+        s.style.cssText = `top:${(i * h).toFixed(2)}px;height:${(h + 1).toFixed(2)}px`;
+        slats.push(s);
+      }
+      B.cords.forEach((x) => {
+        const c = blind.appendChild(document.createElement("i"));
+        c.className = "cover-cord";
+        c.style.left = `${x * 100}%`;
+        cords.push(c);
+      });
+      cover.classList.add("has-blind");
+    }
+
     // ---------- type + three.js ---------------------------------------------
     const fontsReady = Promise.race([
       Promise.all([
@@ -93,7 +120,10 @@
       ]),
       new Promise((r) => setTimeout(r, 2500)),
     ]);
-    const [THREE] = await Promise.all([DR.loadThree(), fontsReady]);
+    // a slow CDN must never hold the studio shut: after a few seconds the hero
+    // develops in CSS instead, and the game keeps waiting for three on its own
+    const threeOrGiveUp = Promise.race([DR.loadThree(), new Promise((r) => setTimeout(() => r(null), CONFIG.load.threeWait))]);
+    const [THREE] = await Promise.all([threeOrGiveUp, fontsReady]);
 
     // ---------- Lenis on GSAP's ticker (PATTERNS §0) ---------------------
     const lenis = new Lenis({ lerp: 0.1 });
@@ -119,6 +149,43 @@
       tickers.forEach((fn) => fn(t, dt, v, v - lastV));
       lastV = v;
     });
+
+    // ---------- daylight: the real sun in Lagos (js/light.js) ---------------
+    DR.light.init({ lenis, reduced, tickers });
+    {
+      const sunEl = document.querySelector(".sun");
+      const chip = sunEl.querySelector(".sun-chip");
+      const dial = sunEl.querySelector(".sun-dial");
+      const range = dial.querySelector(".sun-range");
+      const nowBtn = dial.querySelector(".sun-now");
+      const timeEl = chip.querySelector(".sun-time");
+      const nameEl = chip.querySelector(".sun-name");
+      let dragging = false;
+      DR.light.onChange((min, name, live) => {
+        timeEl.textContent = DR.light.clock(min);
+        nameEl.textContent = name;
+        if (!dragging) range.value = min;
+        nowBtn.disabled = live;
+        sunEl.classList.toggle("is-night", name === "lamplight");
+      });
+      const open = (on) => {
+        if (on === !dial.hidden) return;
+        chip.setAttribute("aria-expanded", on);
+        if (on) {
+          dial.hidden = false;
+          gsap.fromTo(dial, { opacity: 0, y: 10, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "power3.out", overwrite: true });
+        } else {
+          gsap.to(dial, { opacity: 0, y: 6, scale: 0.98, duration: 0.15, ease: "power2.in", overwrite: true, onComplete: () => (dial.hidden = true) });
+        }
+      };
+      chip.addEventListener("click", () => open(dial.hidden));
+      range.addEventListener("pointerdown", () => (dragging = true));
+      window.addEventListener("pointerup", () => (dragging = false));
+      range.addEventListener("input", () => DR.light.set(+range.value));
+      nowBtn.addEventListener("click", () => DR.light.now());
+      document.addEventListener("pointerdown", (e) => { if (!sunEl.contains(e.target)) open(false); });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape") open(false); });
+    }
 
     // ---------- header -------------------------------------------------------
     const top = document.querySelector(".top");
@@ -331,19 +398,33 @@
       root.classList.add("is-ready");
       const title = SplitText.create(".hero-title", { type: "lines", mask: "lines" });
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      // first visit: the loading screen clears its HUD, then lifts like a blind
+      // first visit: the loading screen clears its HUD, the blind's slats tilt
+      // open — daylight comes in through them in stripes — then the blind rises
+      // and the window's light settles across the page
+      const sun = DR.light.intro;
       let o = 0;
-      if (firstVisit) {
+      if (reduced) {
+        sun.v = 1;
+        tl.to(cover, { opacity: 0, duration: 0.3 });
+      } else if (firstVisit) {
+        const B = CONFIG.blind;
         tl.to(".cover-inner > *", { yPercent: -40, opacity: 0, duration: 0.45, stagger: 0.04, ease: "power3.in" })
-          .to(cover, { clipPath: "inset(0% 0% 100% 0%)", duration: 1.1, ease: "hop" }, 0.25);
-        o = 0.7;
+          .to(cords, { opacity: 0, duration: 0.4, ease: "power2.out" }, 0.2)
+          .set(sun, { blind: 1 }, 0)
+          .to(slats, { rotationX: B.tilt, duration: B.open, ease: "power3.inOut", stagger: { each: B.each, from: "center" } }, 0.3)
+          .to(sun, { v: 1, duration: 1.1, ease: "power2.out" }, 0.45)
+          .to(blind, { yPercent: -101, duration: B.raise, ease: "hop" }, 1.1)
+          .to(sun, { blind: 0, duration: 1.2, ease: "power2.inOut" }, 1.15)
+          .set(cover, { autoAlpha: 0 });
+        o = 1.05;
       } else {
-        tl.to(cover, { opacity: 0, duration: 0.6, ease: "power2.out" });
+        tl.to(cover, { opacity: 0, duration: 0.6, ease: "power2.out" })
+          .to(sun, { v: 1, duration: 1.6, ease: "power2.inOut" }, 0.1);
       }
       tl.from(".top", { yPercent: -100, duration: 0.9 }, o + 0.15)
         .from(".hero .eyebrow", { y: 16, opacity: 0, duration: 0.8 }, o + 0.2)
         .from(title.lines, { yPercent: 100, duration: 1.1, stagger: 0.09, ease: "power4.out", onComplete: () => played.push(title) }, o + 0.25)
-        .from(".hero-lede, .hero-ctas, .proof", { y: 22, opacity: 0, duration: 0.9, stagger: 0.08 }, o + 0.55)
+        .from(".hero-lede, .hero-ctas, .proof, .hero-extras", { y: 22, opacity: 0, duration: 0.9, stagger: 0.08 }, o + 0.55)
         .from(".hero-tray", { y: 50, opacity: 0, duration: 1.2 }, o + 0.35)
         .add(() => playReel(0), o + 0.6);
       rollOdometers(o + 0.75, tl);
@@ -399,6 +480,12 @@
 
     // ---------- work: each print develops as it arrives ---------------------
     const D = CONFIG.develop;
+    document.querySelectorAll(".case .print").forEach((fig) => {
+      const win = document.createElement("span");
+      win.className = "print-win";
+      fig.insertBefore(win, fig.firstChild);
+      win.appendChild(fig.querySelector("img"));
+    });
     document.querySelectorAll(".case").forEach((c) => {
       const media = c.querySelector(".case-media");
       const img = c.querySelector(".print img");
@@ -430,14 +517,14 @@
     const pile = document.querySelector(".pile");
     const pileCases = [...pile.querySelectorAll(".case")];
     pileCases.forEach((c, i) => c.style.setProperty("--i", i));
+    const flowTop = (k) => {
+      let y = pile.getBoundingClientRect().top + window.scrollY;
+      for (let j = 0; j < k; j++) y += pileCases[j].offsetHeight + parseFloat(getComputedStyle(pileCases[j]).marginBottom);
+      return y;
+    };
+    const stickTop = (k) => parseFloat(getComputedStyle(pileCases[k]).top);
     gsap.matchMedia().add("(min-width: 901px) and (min-height: 660px)", () => {
       const P = CONFIG.pile;
-      const flowTop = (k) => {
-        let y = pile.getBoundingClientRect().top + window.scrollY;
-        for (let j = 0; j < k; j++) y += pileCases[j].offsetHeight + parseFloat(getComputedStyle(pileCases[j]).marginBottom);
-        return y;
-      };
-      const stickTop = (k) => parseFloat(getComputedStyle(pileCases[k]).top);
       pileCases.slice(0, -1).forEach((c, i) => {
         const shade = c.querySelector(".case-shade");
         const tilt = P.tilt[i % P.tilt.length];
@@ -453,40 +540,119 @@
       return () => gsap.set(pileCases, { clearProps: "transform" });
     });
 
-    // ---------- services ----------------------------------------------------
+    // ---------- work: the prints scroll the real, live page ------------------
+    // A full-page capture (data-full) is fetched as its case comes near and
+    // swapped in; then, while that case lies on top of the pile, scrolling the
+    // portfolio scrolls the product's own homepage inside the print.
+    const PAN = CONFIG.pan;
+    const panEase = gsap.parseEase(PAN.ease);
+    const pans = pileCases.map((c, i) => {
+      const fig = c.querySelector(".print");
+      if (!fig.dataset.full || reduced) return null;
+      const P = { i, fig, img: fig.querySelector("img"), win: fig.querySelector(".print-win"), ready: false, p: 0 };
+      ScrollTrigger.create({
+        trigger: c,
+        start: "top 260%",
+        once: true,
+        onEnter: () => {
+          const tall = new Image();
+          tall.decoding = "async";
+          tall.src = fig.dataset.full;
+          tall.decode().then(() => {
+            P.img.removeAttribute("width");
+            P.img.removeAttribute("height");
+            P.img.src = tall.src;
+            fig.classList.add("is-tall");
+            fig.style.setProperty("--bar", 1);
+            P.ready = true;
+            paintPan(P);
+          }, () => {});
+        },
+      });
+      return P;
+    }).filter(Boolean);
+    function paintPan(P) {
+      if (!P.ready) return;
+      const k = panEase(gsap.utils.clamp(0, 1, (P.p - PAN.hold) / (1 - 2 * PAN.hold)));
+      // capped, so the page reads as scrolled, not flung
+      const travel = Math.min(PAN.depth * P.win.offsetHeight, Math.max(0, P.img.offsetHeight - P.win.offsetHeight));
+      gsap.set(P.img, { y: -travel * k });
+      P.fig.style.setProperty("--pan", k.toFixed(4));
+    }
+    gsap.matchMedia().add({ pile: "(min-width: 901px) and (min-height: 660px)", flat: "(max-width: 900px), (max-height: 659px)" }, ({ conditions }) => {
+      const last = pileCases.length - 1;
+      pans.forEach((P) => {
+        const i = P.i;
+        const opts = conditions.pile
+          ? {
+              // from the case landing on the pile until the next one reaches its print
+              start: () => flowTop(i) - stickTop(i) - window.innerHeight * PAN.lead,
+              end: () => (i < last ? flowTop(i + 1) - window.innerHeight * PAN.cover : flowTop(i) - stickTop(i) + window.innerHeight * 0.8),
+            }
+          : { trigger: P.win, start: "top 78%", end: "bottom 22%" };
+        const paint = ({ progress }) => { P.p = progress; paintPan(P); };
+        ScrollTrigger.create({ ...opts, onUpdate: paint, onRefresh: paint });
+      });
+    });
+
+    // ---------- services: each row develops its proof under the cursor ------
     const services = [...document.querySelectorAll(".service")];
-    let servicesIn = false;
     gsap.set(services, { y: 50, opacity: 0 });
     ScrollTrigger.create({
       trigger: ".service-grid",
       start: "top 82%",
       once: true,
-      onEnter: () => gsap.to(services, { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out", onComplete: () => (servicesIn = true) }),
+      onEnter: () => gsap.to(services, { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out" }),
     });
-    // cards lean toward the pointer; a soft cobalt light follows it
     if (finePointer && !reduced) {
-      const T = CONFIG.tilt;
-      services.forEach((card) => {
-        const s = { rx: 0, ry: 0, lift: 0, trx: 0, try: 0, tlift: 0 };
-        card.addEventListener("pointermove", (e) => {
-          const r = card.getBoundingClientRect();
-          const nx = (e.clientX - r.left) / r.width, ny = (e.clientY - r.top) / r.height;
-          s.try = (nx - 0.5) * T.max;
-          s.trx = (0.5 - ny) * T.max;
-          s.tlift = -8;
-          card.style.setProperty("--mx", `${(nx * 100).toFixed(1)}%`);
-          card.style.setProperty("--my", `${(ny * 100).toFixed(1)}%`);
-        });
-        card.addEventListener("pointerleave", () => { s.trx = s.try = s.tlift = 0; });
-        tickers.push(() => {
-          if (!servicesIn) return;
-          const settled = Math.abs(s.trx - s.rx) + Math.abs(s.try - s.ry) + Math.abs(s.tlift - s.lift) < 0.01;
-          if (settled) return;
-          s.rx += (s.trx - s.rx) * T.lerp;
-          s.ry += (s.try - s.ry) * T.lerp;
-          s.lift += (s.tlift - s.lift) * T.lerp;
-          gsap.set(card, { rotationX: s.rx, rotationY: s.ry, y: s.lift, transformPerspective: 900 });
-        });
+      const F = CONFIG.proof;
+      const grid = document.querySelector(".service-grid");
+      const card = document.querySelector(".proof-print");
+      const win = card.querySelector(".proof-win");
+      const cap = card.querySelector(".proof-cap");
+      const S = { on: false, x: 0, y: 0, tx: 0, ty: 0, rot: 0, cur: -1 };
+      // preload, so the first hover develops instead of flashing in
+      services.forEach((row) => { new Image().src = row.dataset.proof; });
+      const show = (on) => {
+        if (on === S.on) return;
+        S.on = on;
+        if (on) {
+          S.x = S.tx; S.y = S.ty;
+          gsap.fromTo(card, { autoAlpha: 0, scale: 0.7 }, { autoAlpha: 1, scale: 1, duration: 0.6, ease: "power3.out", overwrite: "auto" });
+        } else {
+          S.cur = -1;
+          gsap.to(card, { autoAlpha: 0, scale: 0.8, duration: 0.22, ease: "power2.in", overwrite: "auto" });
+        }
+      };
+      // a new shot opens from the centre on top of the last (CG05112025), and develops
+      const swap = (i) => {
+        if (i === S.cur) return;
+        S.cur = i;
+        const row = services[i];
+        const shot = win.appendChild(document.createElement("div"));
+        shot.className = "proof-shot";
+        const img = shot.appendChild(new Image());
+        img.src = row.dataset.proof;
+        img.alt = "";
+        gsap.set(img, { scale: 1.25, filter: D.from });
+        gsap.to(shot, { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)", duration: F.open, ease: "power4.out" });
+        gsap.to(img, { scale: 1, filter: D.to, duration: F.develop, ease: "develop" });
+        [...win.children].slice(0, -2).forEach((old) => old.remove()); // keep the last two under it
+        cap.innerHTML = "Proof — <b>" + row.dataset.proofName + "</b>";
+      };
+      grid.addEventListener("pointermove", (e) => { S.tx = e.clientX; S.ty = e.clientY; });
+      grid.addEventListener("pointerleave", () => show(false));
+      services.forEach((row, i) => row.addEventListener("pointerenter", (e) => { S.tx = e.clientX; S.ty = e.clientY; show(true); swap(i); }));
+      tickers.push(() => {
+        if (!S.on && +gsap.getProperty(card, "opacity") === 0) return;
+        const px = S.x;
+        S.x += (S.tx - S.x) * F.lerp;
+        S.y += (S.ty - S.y) * F.lerp;
+        // it leans into the way it's moving, like paper through air
+        S.rot += (gsap.utils.clamp(-F.lean, F.lean, (S.x - px) * 0.35) - S.rot) * 0.12;
+        const w = card.offsetWidth, h = card.offsetHeight;
+        const flip = S.x + F.gap + w > innerWidth - 12;
+        gsap.set(card, { x: flip ? S.x - F.gap - w : S.x + F.gap, y: S.y - h * 0.55, rotation: S.rot });
       });
     }
 
@@ -779,6 +945,8 @@
         if (p > 0.4 !== flooded) {
           flooded = p > 0.4;
           contact.classList.toggle("is-flooded", flooded);
+          // keep the cream type crisp: the window's light falls softer on cobalt
+          gsap.to(DR.light.intro, { dim: flooded ? 0.45 : 1, duration: 0.9, ease: "power2.out", overwrite: true });
           cur.classList.toggle("is-inverse", flooded && contact.matches(":hover"));
         }
       },
@@ -795,6 +963,7 @@
 
     // ---------- nav ------------------------------------------------------------
     document.querySelectorAll('a[href^="#"]').forEach((a) => {
+      if (a.closest(".menu")) return; // the menu moves the page behind its closed blind
       a.addEventListener("click", (e) => {
         const id = a.getAttribute("href");
         const target = id === "#top" ? 0 : document.querySelector(id);
@@ -812,6 +981,77 @@
         onToggle: (self) => link && link.classList.toggle("is-active", self.isActive),
       });
     });
+
+    // ---------- menu (small screens): the blind closes over the page ----------
+    // The slats tilt shut, the sections rise on them; pick one and the page
+    // jumps behind the closed blind, then the slats tilt open on the new room.
+    {
+      const B = CONFIG.blind;
+      const menu = document.getElementById("menu");
+      const toggle = document.querySelector(".menu-toggle");
+      const mBlind = menu.querySelector(".menu-blind");
+      const mLinks = [...menu.querySelectorAll(".menu-links a")];
+      const mFoot = menu.querySelector(".menu-foot");
+      const mSun = menu.querySelector(".menu-sun");
+      DR.light.onChange((min, name) => (mSun.textContent = `Lit by Lagos · ${DR.light.clock(min)} · ${name}`));
+      let mSlats = [], open = false, busy = false, queued = null; // a tap mid-animation is queued, never dropped
+      const build = () => {
+        mBlind.innerHTML = "";
+        const n = Math.max(9, Math.round(innerHeight / B.slatPx)), h = innerHeight / n;
+        mSlats = Array.from({ length: n }, (_, i) => {
+          const sl = mBlind.appendChild(document.createElement("i"));
+          sl.className = "slat";
+          sl.style.cssText = `top:${(i * h).toFixed(2)}px;height:${(h + 1).toFixed(2)}px`;
+          return sl;
+        });
+      };
+      const openMenu = () => {
+        if (busy || open) return;
+        busy = open = true;
+        build();
+        menu.hidden = false;
+        root.classList.add("menu-open");
+        toggle.setAttribute("aria-expanded", "true");
+        lenis.stop();
+        gsap.set(mSlats, { rotationX: B.tilt });
+        gsap.set(mLinks, { yPercent: 110 });
+        gsap.set(mFoot, { y: 16, opacity: 0 });
+        gsap.timeline({ onComplete: () => { busy = false; if (queued) { const q = queued; queued = null; return closeMenu(q.jump); } mLinks[0].focus({ preventScroll: true }); } })
+          .to(mSlats, { rotationX: 0, duration: reduced ? 0.01 : 0.55, ease: "power3.inOut", stagger: { each: reduced ? 0 : 0.022, from: "start" } })
+          .to(mLinks, { yPercent: 0, duration: 0.8, stagger: 0.06, ease: "power4.out" }, reduced ? 0 : 0.3)
+          .to(mFoot, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, reduced ? 0 : 0.6);
+      };
+      // exits run about three times faster than entrances, links leave in reverse
+      const closeMenu = (jump) => {
+        if (busy) { if (open) queued = { jump }; return; }
+        if (!open) return;
+        busy = true;
+        gsap.timeline({
+          onComplete: () => {
+            menu.hidden = true;
+            root.classList.remove("menu-open");
+            toggle.setAttribute("aria-expanded", "false");
+            busy = open = false;
+            queued = null;
+            if (!jump) toggle.focus({ preventScroll: true });
+          },
+        })
+          .to(mLinks, { yPercent: -110, duration: 0.28, stagger: -0.03, ease: "power3.in" })
+          .to(mFoot, { opacity: 0, duration: 0.2 }, 0)
+          .add(() => {
+            lenis.start();
+            if (jump) lenis.scrollTo(jump.target, { immediate: true, offset: jump.offset, force: true });
+          })
+          .to(mSlats, { rotationX: B.tilt, duration: reduced ? 0.01 : 0.5, ease: "power3.inOut", stagger: { each: reduced ? 0 : 0.018, from: "end" } });
+      };
+      toggle.addEventListener("click", () => (open ? closeMenu() : openMenu()));
+      mLinks.forEach((a) => a.addEventListener("click", (e) => {
+        e.preventDefault();
+        closeMenu({ target: document.querySelector(a.getAttribute("href")), offset: -20 });
+      }));
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape" && open) closeMenu(); });
+      window.addEventListener("resize", debounce(() => { if (open && innerWidth > 900) closeMenu(); }, 150));
+    }
 
     // ---------- resize ---------------------------------------------------------
     let lastW = window.innerWidth;

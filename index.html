@@ -49,13 +49,14 @@
   <a class="skip mono" href="#work">Skip to the work</a>
 
   <div class="cover" aria-hidden="true">
+    <div class="cover-blind"></div>
     <div class="cover-inner">
       <p class="cover-name">Michael <em>Omale</em></p>
       <div class="cover-load">
         <p class="mono">Loading studio</p>
         <div class="cover-bar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       </div>
-      <p class="cover-tip mono"><span>Tip</span> There’s a game hiding in the studio. Scroll to Play.</p>
+      <p class="cover-tip mono"><span>Tip</span> The studio is lit by the real sun in Lagos. And there’s a game hiding in it.</p>
       <p class="cover-count"><span class="cover-num">00</span></p>
     </div>
   </div>
@@ -87,8 +88,29 @@
       <a href="#play" data-cursor="link" class="nav-play">Play</a>
     </nav>
     <a class="btn btn--small" href="#contact" data-cursor="link" data-magnetic>Start a project</a>
+    <button class="menu-toggle mono" type="button" aria-expanded="false" aria-controls="menu" data-cursor="link"><span class="menu-toggle-label"><span>Menu</span><span>Close</span></span><span class="menu-toggle-lines" aria-hidden="true"><i></i><i></i></span></button>
     <span class="top-progress" aria-hidden="true"></span>
   </header>
+
+  <!-- small screens: the blind closes over the page and the sections rise on it -->
+  <nav class="menu" id="menu" aria-label="Sections" hidden>
+    <div class="menu-blind" aria-hidden="true"></div>
+    <div class="menu-inner">
+      <ol class="menu-links">
+        <li><a href="#work"><span class="mono">01</span>Work</a></li>
+        <li><a href="#services"><span class="mono">02</span>Services</a></li>
+        <li><a href="#archive"><span class="mono">03</span>Archive</a></li>
+        <li><a href="#story"><span class="mono">04</span>Story</a></li>
+        <li><a href="#play"><span class="mono">05</span>Play</a></li>
+        <li><a href="#contact"><span class="mono">06</span><em>Contact</em></a></li>
+      </ol>
+      <div class="menu-foot mono">
+        <a href="mailto:michaelomaleson@gmail.com">michaelomaleson@gmail.com</a>
+        <a href="https://wa.me/2348124994445" target="_blank" rel="noopener">WhatsApp ↗</a>
+        <span class="menu-sun"></span>
+      </div>
+    </div>
+  </nav>
 
   <main id="top">
 
@@ -108,7 +130,20 @@
           <li><b class="odo">200+</b><span class="mono">students on LogFolio</span></li>
           <li><b class="odo">6</b><span class="mono">products live in&nbsp;production</span></li>
         </ul>
-        <a class="hero-play mono" href="#play" data-cursor="link"><span class="hero-play-key" aria-hidden="true">▶</span>Need a break? Play <em>Paper Flight</em></a>
+        <div class="hero-extras">
+          <a class="hero-play mono" href="#play" data-cursor="link"><span class="hero-play-key" aria-hidden="true">▶</span>Need a break? Play <em>Paper Flight</em></a>
+          <div class="sun">
+            <button class="sun-chip mono" type="button" aria-expanded="false" aria-controls="sunDial" data-cursor="link">
+              <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg>
+              <span>Lit by Lagos · <b class="sun-time">--:--</b> · <i class="sun-name">daylight</i></span>
+            </button>
+            <div class="sun-dial" id="sunDial" hidden>
+              <p class="sun-dial-head mono"><span>Drag the sun</span><button class="sun-now" type="button" data-cursor="link">Back to now</button></p>
+              <input class="sun-range" type="range" min="0" max="1439" step="1" value="720" aria-label="Time of day in Lagos">
+              <p class="sun-dial-ticks mono" aria-hidden="true"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></p>
+            </div>
+          </div>
+        </div>
         <svg class="scribble" aria-hidden="true"></svg>
       </div>
 
@@ -150,7 +185,7 @@
       <article class="case" data-reel data-kind="Tender platform · Nuxt" style="--tint:#0f5c55">
         <span class="case-shade" aria-hidden="true"></span>
         <a class="case-media" href="https://bidcentra.co.uk" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Visit site">
-          <figure class="print"><img src="images/bidcentra.jpg" alt="BidCentra homepage: Win contracts with bids built to score" loading="lazy" width="1440" height="900"></figure>
+          <figure class="print" data-full="images/bidcentra-full.jpg"><img src="images/bidcentra.jpg" alt="BidCentra homepage: Win contracts with bids built to score" loading="lazy" width="1440" height="900"></figure>
         </a>
         <div class="case-body">
           <p class="case-meta mono"><span>01<em> / 06</em></span>Tender platform · 2026</p>
@@ -165,7 +200,7 @@
       <article class="case" data-reel data-kind="AI logbook · Nuxt" style="--tint:#2c5a3a">
         <span class="case-shade" aria-hidden="true"></span>
         <a class="case-media" href="https://logfolio.pro" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Visit site">
-          <figure class="print"><img src="images/logfolio.jpg" alt="LogFolio homepage: turn weekly SIWES activities into professional logbook entries" loading="lazy" width="1440" height="900"></figure>
+          <figure class="print" data-full="images/logfolio-full.jpg"><img src="images/logfolio.jpg" alt="LogFolio homepage: turn weekly SIWES activities into professional logbook entries" loading="lazy" width="1440" height="900"></figure>
         </a>
         <div class="case-body">
           <p class="case-meta mono"><span>02<em> / 06</em></span>AI product · 2026</p>
@@ -198,7 +233,7 @@
       <article class="case" data-reel data-kind="AI job copilot · Nuxt" style="--tint:#7457ff">
         <span class="case-shade" aria-hidden="true"></span>
         <a class="case-media" href="https://jobizzy.logfolio.pro" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Visit site">
-          <figure class="print"><img src="images/jobizzy.jpg" alt="Jobizzy: your AI job copilot" loading="lazy" width="1440" height="900"></figure>
+          <figure class="print" data-full="images/jobizzy-full.jpg"><img src="images/jobizzy.jpg" alt="Jobizzy: your AI job copilot" loading="lazy" width="1440" height="900"></figure>
         </a>
         <div class="case-body">
           <p class="case-meta mono"><span>04<em> / 06</em></span>Agentic AI · 2026</p>
@@ -216,7 +251,7 @@
       <article class="case" data-reel data-kind="School results · Next.js" style="--tint:#1b2f8a">
         <span class="case-shade" aria-hidden="true"></span>
         <a class="case-media" href="https://voxlms-seven.vercel.app" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Visit site">
-          <figure class="print"><img src="images/voxlms.jpg" alt="VoxLMS: your teachers enter the scores, VoxLMS does the rest" loading="lazy" width="1440" height="900"></figure>
+          <figure class="print" data-full="images/voxlms-full.jpg"><img src="images/voxlms.jpg" alt="VoxLMS: your teachers enter the scores, VoxLMS does the rest" loading="lazy" width="1440" height="900"></figure>
         </a>
         <div class="case-body">
           <p class="case-meta mono"><span>05<em> / 06</em></span>School SaaS · 2026</p>
@@ -257,32 +292,50 @@
         <p class="eyebrow mono"><i>02</i> How I can help</p>
         <h2 data-reveal>Bring the idea. I'll ship the&nbsp;product.</h2>
       </div>
-      <ol class="service-grid">
-        <li class="service">
+      <!-- each service carries its proof: hover a row and the work develops under the cursor -->
+      <ol class="service-grid" data-cursor="proof">
+        <li class="service" data-proof="images/voxlms.jpg" data-proof-name="VoxLMS">
           <span class="service-no mono">01</span>
           <h3>Product builds</h3>
-          <p>SaaS apps, dashboards and internal tools — auth, data, payments, admin. From first sketch to a deployed product your users can log into.</p>
-          <span class="service-tags mono">Nuxt · Next · Node</span>
+          <div class="service-text">
+            <p>SaaS apps, dashboards and internal tools — auth, data, payments, admin. From first sketch to a deployed product your users can log into.</p>
+            <span class="service-tags mono">Nuxt · Next · Node</span>
+            <span class="service-proof mono">Proof <a href="https://voxlms-seven.vercel.app" target="_blank" rel="noopener" data-cursor="link">VoxLMS ↗</a><a href="https://logfolio.pro" target="_blank" rel="noopener" data-cursor="link">LogFolio ↗</a></span>
+          </div>
+          <span class="service-go" aria-hidden="true">→</span>
         </li>
-        <li class="service">
+        <li class="service" data-proof="images/jobizzy-2.jpg" data-proof-name="Jobizzy">
           <span class="service-no mono">02</span>
           <h3>AI features</h3>
-          <p>Copilots, agents and automations that do real work: generation, scoring, research, enrichment — wired into your product, not bolted on.</p>
-          <span class="service-tags mono">LLMs · Agents · RAG</span>
+          <div class="service-text">
+            <p>Copilots, agents and automations that do real work: generation, scoring, research, enrichment — wired into your product, not bolted on.</p>
+            <span class="service-tags mono">LLMs · Agents · RAG</span>
+            <span class="service-proof mono">Proof <a href="https://jobizzy.logfolio.pro" target="_blank" rel="noopener" data-cursor="link">Jobizzy ↗</a><a href="https://kleoris.vercel.app" target="_blank" rel="noopener" data-cursor="link">Kleoris ↗</a></span>
+          </div>
+          <span class="service-go" aria-hidden="true">→</span>
         </li>
-        <li class="service">
+        <li class="service" data-proof="images/salle-blanche.jpg" data-proof-name="Salle Blanche">
           <span class="service-no mono">03</span>
           <h3>Brand &amp; marketing sites</h3>
-          <p>Editorial, animation&#8209;rich sites that still load fast and rank — for studios, restaurants, artists and launches.</p>
-          <span class="service-tags mono">GSAP · Three.js · SEO</span>
+          <div class="service-text">
+            <p>Editorial, animation&#8209;rich sites that still load fast and rank — for studios, restaurants, artists and launches.</p>
+            <span class="service-tags mono">GSAP · Three.js · SEO</span>
+            <span class="service-proof mono">Proof <a href="https://salle-blanche-henna.vercel.app" target="_blank" rel="noopener" data-cursor="link">Salle Blanche ↗</a><a href="https://vivien-roux.vercel.app" target="_blank" rel="noopener" data-cursor="link">Vivien Roux ↗</a></span>
+          </div>
+          <span class="service-go" aria-hidden="true">→</span>
         </li>
-        <li class="service">
+        <li class="service" data-proof="images/histonaija.jpg" data-proof-name="HistoNaija">
           <span class="service-no mono">04</span>
           <h3>Speed &amp; rescue</h3>
-          <p>Slow or tangled Vue and React apps, untangled: Core Web Vitals, bundle budgets, refactors and the bugs nobody else could find.</p>
-          <span class="service-tags mono">Performance · Refactor</span>
+          <div class="service-text">
+            <p>Slow or tangled Vue and React apps, untangled: Core Web Vitals, bundle budgets, refactors and the bugs nobody else could find.</p>
+            <span class="service-tags mono">Performance · Refactor</span>
+            <span class="service-proof mono">Proof <a href="https://histonaija.logfolio.pro" target="_blank" rel="noopener" data-cursor="link">HistoNaija ↗</a></span>
+          </div>
+          <span class="service-go" aria-hidden="true">→</span>
         </li>
       </ol>
+      <div class="proof-print" aria-hidden="true"><div class="proof-win"></div><p class="proof-cap mono"></p></div>
 
       <div class="process">
         <div class="process-head">
@@ -520,6 +573,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
   <script src="js/art.js"></script>
+  <script src="js/light.js"></script>
   <script src="js/gl.js"></script>
   <script src="js/rope.js"></script>
   <script src="js/game.js"></script>
