@@ -1,31 +1,529 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <title>Michael Omale — Website Developer</title>
-    <meta
-      name="description"
-      content="Michael Omale is a website developer building fast, animation-rich interfaces — and the systems behind them — for real users in underserved markets."
-    />
-    <meta property="og:title" content="Michael Omale — Website Developer" />
-    <meta
-      property="og:description"
-      content="Fast, animation-rich interfaces and the systems behind them, for real users in underserved markets."
-    />
-    <meta property="og:type" content="website" />
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Michael Omale — Software engineer</title>
+  <meta name="description" content="Michael Omale builds web products people actually rely on — AI tools, SaaS dashboards and brand sites with Vue, React, Nuxt and Next.">
+  <meta property="og:title" content="Michael Omale — Software engineer">
+  <meta property="og:description" content="Web products people actually rely on. AI tools, SaaS and crafted brand sites.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://portfolio-theta-ten-n4gyyye5st.vercel.app/">
+  <meta property="og:image" content="https://portfolio-theta-ten-n4gyyye5st.vercel.app/images/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Michael Omale — web products people actually rely on">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://portfolio-theta-ten-n4gyyye5st.vercel.app/images/og.jpg">
+  <link rel="canonical" href="https://portfolio-theta-ten-n4gyyye5st.vercel.app/">
+  <meta name="theme-color" content="#f4f0e8">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Michael Omale",
+    "jobTitle": "Software engineer",
+    "description": "Full-stack engineer building AI tools, SaaS dashboards and brand sites with Vue, React, Nuxt and Next.",
+    "url": "https://portfolio-theta-ten-n4gyyye5st.vercel.app/",
+    "email": "mailto:michaelomaleson@gmail.com",
+    "telephone": "+2348124994445",
+    "address": { "@type": "PostalAddress", "addressCountry": "NG" },
+    "knowsAbout": ["Vue.js", "Nuxt", "React", "Next.js", "TypeScript", "AI agents", "GSAP", "Three.js"],
+    "sameAs": ["https://github.com/Micheal-Omale", "https://www.facebook.com/Mikeoneh"]
+  }
+  </script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect x=%274%27 y=%276%27 width=%2724%27 height=%2720%27 rx=%272%27 fill=%27%23fffdf9%27 stroke=%27%2317150f%27 stroke-width=%272%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%275%27 fill=%27%232b45ff%27/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <noscript><style>.cover{display:none}[data-intro]{visibility:visible}</style></noscript>
+  <script>
+    try{if(sessionStorage.getItem("mo-seen"))document.documentElement.classList.add("skip-load")}catch(e){}
+    // the loading screen waits (briefly) for its serif so it never shows in Georgia
+    (function(){var r=document.documentElement,go=function(){r.classList.add("fonts-in")};try{Promise.race([document.fonts.load("400 100px \"Instrument Serif\""),new Promise(function(f){setTimeout(f,900)})]).then(go,go)}catch(e){go()}})();
+  </script>
+</head>
+<body>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+  <a class="skip mono" href="#work">Skip to the work</a>
+
+  <div class="cover" aria-hidden="true">
+    <div class="cover-inner">
+      <p class="cover-name">Michael <em>Omale</em></p>
+      <div class="cover-load">
+        <p class="mono">Loading studio</p>
+        <div class="cover-bar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <p class="cover-tip mono"><span>Tip</span> There’s a game hiding in the studio. Scroll to Play.</p>
+      <p class="cover-count"><span class="cover-num">00</span></p>
+    </div>
+  </div>
+  <div class="paper-grain" aria-hidden="true"></div>
+
+  <div class="cursor" aria-hidden="true"><span class="cursor-ring"></span><span class="cursor-dot"></span><span class="cursor-label mono"></span></div>
+
+  <div class="loupe" aria-hidden="true">
+    <div class="loupe-body">
+      <div class="loupe-lens"></div>
+      <div class="loupe-rim"></div>
+    </div>
+  </div>
+
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <filter id="lens" x="0" y="0" width="100%" height="100%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feImage id="lensMap" x="0" y="0" width="220" height="220" preserveAspectRatio="none" result="map"/>
+      <feDisplacementMap in="SourceGraphic" in2="map" scale="46" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
+
+  <header class="top" data-intro>
+    <a class="mark" href="#top" data-cursor="link">Michael <em>Omale</em></a>
+    <nav class="top-nav" aria-label="Sections">
+      <a href="#work" data-cursor="link">Work</a>
+      <a href="#services" data-cursor="link">Services</a>
+      <a href="#archive" data-cursor="link">Archive</a>
+      <a href="#story" data-cursor="link">Story</a>
+      <a href="#play" data-cursor="link" class="nav-play">Play</a>
+    </nav>
+    <a class="btn btn--small" href="#contact" data-cursor="link" data-magnetic>Start a project</a>
+    <span class="top-progress" aria-hidden="true"></span>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO -->
+    <section class="hero" aria-label="Introduction">
+      <div class="hero-copy">
+        <p class="eyebrow mono" data-intro><span class="dot"></span>Software engineer · Full&#8209;stack · AI</p>
+        <h1 class="hero-title" data-intro>Web products people <em>actually</em> rely&nbsp;on.</h1>
+        <p class="hero-lede" data-intro>I'm Michael — five&#8209;plus years shipping with Vue, React, Nuxt and Next. AI copilots, SaaS dashboards and brand sites that feel crafted, built end to end and built to be fast.</p>
+        <div class="hero-ctas" data-intro>
+          <a class="btn" href="#contact" data-cursor="link" data-magnetic>Start a project <span aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost" href="#work" data-cursor="link" data-magnetic>See the work</a>
+        </div>
+        <ul class="proof" data-intro>
+          <li><b class="odo">£3.4M+</b><span class="mono">contracts won by BidCentra clients</span></li>
+          <li><b class="odo">300+</b><span class="mono">daily visitors on HistoNaija</span></li>
+          <li><b class="odo">200+</b><span class="mono">students on LogFolio</span></li>
+          <li><b class="odo">6</b><span class="mono">products live in&nbsp;production</span></li>
+        </ul>
+        <a class="hero-play mono" href="#play" data-cursor="link"><span class="hero-play-key" aria-hidden="true">▶</span>Need a break? Play <em>Paper Flight</em></a>
+        <svg class="scribble" aria-hidden="true"></svg>
+      </div>
+
+      <div class="hero-tray" data-intro>
+        <div class="tray">
+          <div class="print-slot" id="reelPrint" role="img" aria-label="Screenshots of Michael's products developing in a photographic tray" data-cursor="ripple" data-cursor-label="Touch the water"></div>
+        </div>
+        <a class="reel-caption" href="#work" data-cursor="link">
+          <span class="mono reel-state">Developing</span>
+          <span class="reel-name">BidCentra</span>
+          <span class="mono reel-kind">Tender platform · Nuxt</span>
+          <span class="reel-dots" aria-hidden="true"></span>
+        </a>
+      </div>
+    </section>
+
+    <div class="marquee" aria-label="Tools I work with">
+      <div class="marquee-track">
+        <span>Vue</span><span>Nuxt</span><span>React</span><span>Next.js</span><span>TypeScript</span><span>Node</span><span>Astro</span><span>AI agents</span><span>GSAP</span><span>Three.js</span><span>Tailwind</span><span>Vercel</span>
+        <span>Vue</span><span>Nuxt</span><span>React</span><span>Next.js</span><span>TypeScript</span><span>Node</span><span>Astro</span><span>AI agents</span><span>GSAP</span><span>Three.js</span><span>Tailwind</span><span>Vercel</span>
+      </div>
+    </div>
+
+    <!-- MANIFESTO -->
+    <section class="manifesto" aria-label="In short">
+      <p class="eyebrow mono"><span class="dot"></span>In short</p>
+      <p class="manifesto-text">I build calm, fast software <span class="pill" aria-hidden="true"><img src="images/logfolio.jpg" alt="" loading="lazy"></span> for students, schools <span class="pill" aria-hidden="true"><img src="images/voxlms.jpg" alt="" loading="lazy"></span> and founders <span class="pill" aria-hidden="true"><img src="images/bidcentra.jpg" alt="" loading="lazy"></span> — products that feel <em>crafted,</em> load before you blink <span class="pill pill--ink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 11 22 3l-6 18-4-7-10-3Z"/><path d="m12 14 10-11"/></svg></span> and quietly do the&nbsp;work.</p>
+    </section>
+
+    <!-- WORK -->
+    <section class="work" id="work" aria-label="Selected work">
+      <div class="sec-head">
+        <p class="eyebrow mono"><i>01</i> Selected work</p>
+        <h2 data-reveal>Six builds, live and in&nbsp;use.</h2>
+      </div>
+
+      <div class="pile">
+
+      <article class="case" data-reel data-kind="Tender platform · Nuxt" style="--tint:#0f5c55">
+        <span class="case-shade" aria-hidden="true"></span>
+        <a class="case-media" href="https://bidcentra.co.uk" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Visit site">
+          <figure class="print"><img src="images/bidcentra.jpg" alt="BidCentra homepage: Win contracts with bids built to score" loading="lazy" width="1440" height="900"></figure>
+        </a>
+        <div class="case-body">
+          <p class="case-meta mono"><span>01<em> / 06</em></span>Tender platform · 2026</p>
+          <h3 class="case-title">BidCentra</h3>
+          <p class="case-lede">Helping UK organisations win public&#8209;sector contracts with bids built to score.</p>
+          <p class="case-desc">Bid writing and tender support, productised: live tender listings with values and deadlines, a 20&#8209;question tender&#8209;readiness scorecard, sector pages for health &amp; social care, facilities and charities, and consultation funnels that turn visitors into enquiries. BidCentra’s clients have since won <b>£3.4M+</b> in three&#8209;year council contracts — one of them worth £571,852 a year.</p>
+          <ul class="chips mono"><li>Nuxt</li><li>Live tender data</li><li>Lead funnels</li><li>£3.4M+ won by clients</li></ul>
+          <a class="case-link mono" href="https://bidcentra.co.uk" target="_blank" rel="noopener" data-cursor="link">bidcentra.co.uk ↗</a>
+        </div>
+      </article>
+
+      <article class="case" data-reel data-kind="AI logbook · Nuxt" style="--tint:#2c5a3a">
+        <span class="case-shade" aria-hidden="true"></span>
+        <a class="case-media" href="https://logfolio.pro" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Visit site">
+          <figure class="print"><img src="images/logfolio.jpg" alt="LogFolio homepage: turn weekly SIWES activities into professional logbook entries" loading="lazy" width="1440" height="900"></figure>
+        </a>
+        <div class="case-body">
+          <p class="case-meta mono"><span>02<em> / 06</em></span>AI product · 2026</p>
+          <h3 class="case-title">LogFolio</h3>
+          <p class="case-lede">Rough SIWES notes in, a print&#8209;ready logbook out — for 200+ Nigerian university students.</p>
+          <p class="case-desc">AI turns casual weekly notes into structured daily entries, tracks supervisor sign&#8209;offs, exports PDFs to university standards and preps students for their defence with mock questions.</p>
+          <ul class="chips mono"><li>Nuxt</li><li>LLM generation</li><li>PDF export</li><li>200+ users</li></ul>
+          <a class="case-link mono" href="https://logfolio.pro" target="_blank" rel="noopener" data-cursor="link">logfolio.pro ↗</a>
+        </div>
+      </article>
+
+      <article class="case" data-reel data-kind="Interactive map · Astro" style="--tint:#a0521d">
+        <span class="case-shade" aria-hidden="true"></span>
+        <a class="case-media" href="https://histonaija.logfolio.pro" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Visit site">
+          <figure class="print"><img src="images/histonaija.jpg" alt="HistoNaija: an interactive map of Nigeria's peoples and kingdoms" loading="lazy" width="1440" height="900"></figure>
+        </a>
+        <div class="case-body">
+          <p class="case-meta mono"><span>03<em> / 06</em></span>Interactive map · 2026</p>
+          <h3 class="case-title">HistoNaija</h3>
+          <p class="case-lede">Where Nigeria's peoples live today, and the states they built before.</p>
+          <p class="case-desc">An interactive map of Nigeria's peoples and some thirty precolonial kingdoms — from Kanem&#8209;Bornu and Benin to the Sokoto Caliphate — with a page for every people and every state. 300+ people explore it every day.</p>
+          <ul class="chips mono"><li>Astro</li><li>TypeScript</li><li>Maps &amp; geodata</li><li>300+ daily</li></ul>
+          <span class="case-links">
+            <a class="case-link mono" href="https://histonaija.logfolio.pro" target="_blank" rel="noopener" data-cursor="link">histonaija.logfolio.pro ↗</a>
+            <a class="case-link mono" href="https://github.com/Micheal-Omale/NaijaMap" target="_blank" rel="noopener" data-cursor="link">Code ↗</a>
+          </span>
+        </div>
+      </article>
+
+      <article class="case" data-reel data-kind="AI job copilot · Nuxt" style="--tint:#7457ff">
+        <span class="case-shade" aria-hidden="true"></span>
+        <a class="case-media" href="https://jobizzy.logfolio.pro" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Visit site">
+          <figure class="print"><img src="images/jobizzy.jpg" alt="Jobizzy: your AI job copilot" loading="lazy" width="1440" height="900"></figure>
+        </a>
+        <div class="case-body">
+          <p class="case-meta mono"><span>04<em> / 06</em></span>Agentic AI · 2026</p>
+          <h3 class="case-title">Jobizzy</h3>
+          <p class="case-lede">An AI job copilot for developers — job hunting is hard, your tools shouldn't be.</p>
+          <p class="case-desc">An agentic workflow that finds roles, scores each one against your skills, builds a research dossier on the company and tailors your CV and cover letter — with one tracker for the whole search.</p>
+          <ul class="chips mono"><li>Nuxt</li><li>AI agents</li><li>Match scoring</li><li>Scraping</li></ul>
+          <span class="case-links">
+            <a class="case-link mono" href="https://jobizzy.logfolio.pro" target="_blank" rel="noopener" data-cursor="link">jobizzy.logfolio.pro ↗</a>
+            <a class="case-link mono" href="https://github.com/Micheal-Omale/Jobizzy" target="_blank" rel="noopener" data-cursor="link">Code ↗</a>
+          </span>
+        </div>
+      </article>
+
+      <article class="case" data-reel data-kind="School results · Next.js" style="--tint:#1b2f8a">
+        <span class="case-shade" aria-hidden="true"></span>
+        <a class="case-media" href="https://voxlms-seven.vercel.app" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Visit site">
+          <figure class="print"><img src="images/voxlms.jpg" alt="VoxLMS: your teachers enter the scores, VoxLMS does the rest" loading="lazy" width="1440" height="900"></figure>
+        </a>
+        <div class="case-body">
+          <p class="case-meta mono"><span>05<em> / 06</em></span>School SaaS · 2026</p>
+          <h3 class="case-title">VoxLMS</h3>
+          <p class="case-lede">Teachers enter the scores. VoxLMS does the rest.</p>
+          <p class="case-desc">Report cards for Nigerian schools: totals, grades and class positions recalculate live, score entry survives a dropped network, principals see which classes are behind, and parents get a PIN to download a print&#8209;ready A4 report.</p>
+          <ul class="chips mono"><li>Next.js</li><li>TypeScript</li><li>Offline&#8209;tolerant</li><li>PDF</li></ul>
+          <span class="case-links">
+            <a class="case-link mono" href="https://voxlms-seven.vercel.app" target="_blank" rel="noopener" data-cursor="link">Live demo ↗</a>
+            <a class="case-link mono" href="https://github.com/Micheal-Omale/VoxLMS" target="_blank" rel="noopener" data-cursor="link">Code ↗</a>
+          </span>
+        </div>
+      </article>
+
+      <article class="case" data-reel data-kind="Art-director portfolio · JS" style="--tint:#2a1aaf">
+        <span class="case-shade" aria-hidden="true"></span>
+        <a class="case-media" href="https://vivien-roux.vercel.app" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Visit site">
+          <figure class="print"><img src="images/vivien-roux.jpg" alt="Vivien Roux portfolio: Made by hand" loading="lazy" width="1440" height="900"></figure>
+        </a>
+        <div class="case-body">
+          <p class="case-meta mono"><span>06<em> / 06</em></span>Brand site · 2026</p>
+          <h3 class="case-title">Vivien Roux</h3>
+          <p class="case-lede">A portfolio that looks made by hand — because the work is.</p>
+          <p class="case-desc">For a Lisbon art director and collage artist who cuts, tears and presses images into identities: loud cobalt and acid type, torn&#8209;paper collage, and an unhurried, tactile pace that matches how the work is made.</p>
+          <ul class="chips mono"><li>Vanilla JS</li><li>Editorial layout</li><li>Art direction</li><li>Brand site</li></ul>
+          <span class="case-links">
+            <a class="case-link mono" href="https://vivien-roux.vercel.app" target="_blank" rel="noopener" data-cursor="link">vivien-roux.vercel.app ↗</a>
+            <a class="case-link mono" href="https://github.com/Micheal-Omale/Vivien_Roux" target="_blank" rel="noopener" data-cursor="link">Code ↗</a>
+          </span>
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="services" id="services" aria-label="Services">
+      <div class="sec-head">
+        <p class="eyebrow mono"><i>02</i> How I can help</p>
+        <h2 data-reveal>Bring the idea. I'll ship the&nbsp;product.</h2>
+      </div>
+      <ol class="service-grid">
+        <li class="service">
+          <span class="service-no mono">01</span>
+          <h3>Product builds</h3>
+          <p>SaaS apps, dashboards and internal tools — auth, data, payments, admin. From first sketch to a deployed product your users can log into.</p>
+          <span class="service-tags mono">Nuxt · Next · Node</span>
+        </li>
+        <li class="service">
+          <span class="service-no mono">02</span>
+          <h3>AI features</h3>
+          <p>Copilots, agents and automations that do real work: generation, scoring, research, enrichment — wired into your product, not bolted on.</p>
+          <span class="service-tags mono">LLMs · Agents · RAG</span>
+        </li>
+        <li class="service">
+          <span class="service-no mono">03</span>
+          <h3>Brand &amp; marketing sites</h3>
+          <p>Editorial, animation&#8209;rich sites that still load fast and rank — for studios, restaurants, artists and launches.</p>
+          <span class="service-tags mono">GSAP · Three.js · SEO</span>
+        </li>
+        <li class="service">
+          <span class="service-no mono">04</span>
+          <h3>Speed &amp; rescue</h3>
+          <p>Slow or tangled Vue and React apps, untangled: Core Web Vitals, bundle budgets, refactors and the bugs nobody else could find.</p>
+          <span class="service-tags mono">Performance · Refactor</span>
+        </li>
+      </ol>
+
+      <div class="process">
+        <div class="process-head">
+          <p class="eyebrow mono">How a project runs</p>
+          <h3 data-reveal>From first call to live&nbsp;product.</h3>
+        </div>
+        <div class="steps-wrap">
+        <svg class="steps-line" aria-hidden="true"><path class="steps-track"/><path class="steps-ink"/></svg>
+        <ol class="steps">
+          <li class="step">
+            <span class="step-dot" aria-hidden="true"></span>
+            <span class="step-no mono">01 · Talk</span>
+            <h4>A short call</h4>
+            <p>What you're building, who it's for and when it needs to be live. You leave with a clear scope and a quote.</p>
+          </li>
+          <li class="step">
+            <span class="step-dot" aria-hidden="true"></span>
+            <span class="step-no mono">02 · Shape</span>
+            <h4>Plan &amp; design</h4>
+            <p>Flows, screens and the data behind them — agreed before any real code is written, so nothing gets built twice.</p>
+          </li>
+          <li class="step">
+            <span class="step-dot" aria-hidden="true"></span>
+            <span class="step-no mono">03 · Build</span>
+            <h4>Build in the open</h4>
+            <p>Shipped in small slices to a live preview link. You see real progress and can steer it as it happens.</p>
+          </li>
+          <li class="step">
+            <span class="step-dot" aria-hidden="true"></span>
+            <span class="step-no mono">04 · Launch</span>
+            <h4>Launch &amp; look after</h4>
+            <p>Deployed, fast and findable, with a proper handover — and I'm still a message away once it's live.</p>
+          </li>
+        </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARCHIVE / CONTACT SHEET -->
+    <section class="archive" id="archive" aria-label="More builds">
+      <div class="sec-head sec-head--split">
+        <div>
+          <p class="eyebrow mono"><i>03</i> Contact sheet</p>
+          <h2 data-reveal>More from the&nbsp;studio.</h2>
+        </div>
+        <p class="sec-note" data-reveal>Brand sites, portfolios and experiments. <span class="only-fine">Hover with the loupe. </span>Click a frame once to mark it, twice to open the live&nbsp;site.</p>
+      </div>
+
+      <div class="sheet" data-cursor="loupe">
+        <div class="sheet-content">
+          <div class="strip">
+            <span class="strip-edge mono">▸ 1 &nbsp;&nbsp; ▸ 1A &nbsp;&nbsp; SAFETY FILM 400 &nbsp;&nbsp; ▸ 2 &nbsp;&nbsp; ▸ 2A</span>
+            <button class="frame" type="button" data-name="Miles Jones" data-href="https://miles-jones-portfolio.vercel.app" data-note="Editorial portfolio for a London photographer — archival, Swiss&#8209;style layout with Next.js, GSAP, Lenis and Three.js."><img src="images/miles-jones.jpg" alt="Miles Jones photographer portfolio" loading="lazy"></button>
+            <button class="frame" type="button" data-name="Kleoris" data-href="https://kleoris.vercel.app" data-note="AI&#8209;enriched Google Maps leads on demand — owner names, verified emails and phone line&#8209;types, with CSV export and an API."><img src="images/kleoris.jpg" alt="Kleoris lead-generation SaaS" loading="lazy"></button>
+            <button class="frame" type="button" data-name="Odumodublvck" data-href="https://odumodublvk.vercel.app" data-note="An artist site for Odumodublvck — collage, stickers and big type, built with Vue and Vite."><img src="images/odumodublvk.jpg" alt="Odumodublvck artist site" loading="lazy"></button>
+            <button class="frame" type="button" data-name="Freshify" data-href="https://freshify-flax.vercel.app" data-note="A product carousel storefront for crafted smoothie bowls."><img src="images/freshify.jpg" alt="Freshify smoothie bowl storefront" loading="lazy"></button>
+            <button class="frame" type="button" data-name="Salle Blanche" data-href="https://salle-blanche-henna.vercel.app" data-note="A premium restaurant site in Next.js — story, menu and reservations, with editorial GSAP motion throughout."><img src="images/salle-blanche.jpg" alt="Salle Blanche restaurant website" loading="lazy"></button>
+            <button class="frame" type="button" data-name="Obsidian" data-href="https://obsidian-ten-blush.vercel.app" data-note="A fashion lookbook for an F/W 2026 collection, built with Vue and Vite."><img src="images/obsidian.jpg" alt="Obsidian fashion lookbook" loading="lazy"></button>
+          </div>
+          <div class="strip">
+            <span class="strip-edge mono">▸ 7 &nbsp;&nbsp; ▸ 7A &nbsp;&nbsp; SAFETY FILM 400 &nbsp;&nbsp; ▸ 8 &nbsp;&nbsp; ▸ 8A</span>
+            <button class="frame" type="button" data-name="IgalaVox" data-href="https://igalavox.vercel.app" data-note="The digital home of Igala culture — names and meanings, pronunciations and community stories."><img src="images/igalavox.jpg" alt="IgalaVox culture platform" loading="lazy"></button>
+            <button class="frame" type="button" data-name="Jobizzy · dashboard" data-href="https://jobizzy.logfolio.pro" data-note="Inside Jobizzy: match scores, company research and every application in one view."><img src="images/jobizzy-2.jpg" alt="Jobizzy dashboard" loading="lazy"></button>
+            <button class="frame" type="button" data-name="Kleoris · enrichment" data-href="https://kleoris.vercel.app" data-note="Kleoris enrichment: owner names, website content and phone line&#8209;types on every lead."><img src="images/kleoris-2.jpg" alt="Kleoris enrichment features" loading="lazy"></button>
+            <button class="frame" type="button" data-name="VoxLMS · report card" data-href="https://voxlms-seven.vercel.app" data-note="The VoxLMS report card — scores, grades, positions and comments, print&#8209;ready for parents."><img src="images/voxlms-2.jpg" alt="VoxLMS report card" loading="lazy"></button>
+            <button class="frame" type="button" data-name="BidCentra · client stories" data-href="https://bidcentra.co.uk" data-note="BidCentra’s client stories — contracts won, told on the site I built for them."><img src="images/bidcentra-2.jpg" alt="BidCentra testimonials" loading="lazy"></button>
+            <button class="frame" type="button" data-name="LogFolio · features" data-href="https://logfolio.pro" data-note="LogFolio’s toolkit: AI generation, daily and weekly modes, supervisor tracking and PDF export."><img src="images/logfolio-2.jpg" alt="LogFolio features" loading="lazy"></button>
+          </div>
+          <svg class="pencil" aria-hidden="true"></svg>
+        </div>
+      </div>
+
+      <p class="sheet-caption" aria-live="polite"><span class="cap-no mono">Frame —</span><span class="cap-text">Pick a frame.</span><a class="cap-link mono" href="#" target="_blank" rel="noopener" hidden data-cursor="link">Open live ↗</a></p>
+    </section>
+
+    <!-- STORY / DRYING LINE -->
+    <section class="story" id="story" aria-label="About">
+      <div class="sec-head sec-head--split">
+        <div>
+          <p class="eyebrow mono"><i>04</i> The story so far</p>
+          <h2 data-reveal>Hung up to dry, one print at a&nbsp;time.</h2>
+        </div>
+        <div class="about">
+          <p class="about-lede" data-reveal>I wrote my first website in 2020 and haven't stopped shipping since. Today I build complete products — front end, back end, AI and the bits in between — for founders, schools, agencies and studios.</p>
+          <p class="about-note" data-reveal>What I care about: interfaces that feel good to use, AI that does real work, and pages that load before you've finished blinking.</p>
+        </div>
+      </div>
+
+      <div class="line-stage">
+        <canvas class="line-canvas" aria-hidden="true"></canvas>
+        <figure class="hang" data-cursor="grab" data-cursor-label="Pull">
+          <span class="hang-pin" aria-hidden="true"></span>
+          <div class="hang-print"><img alt="" data-motif="4" data-glyph="2020"><figcaption><span class="hang-no mono">2020</span><strong class="hang-title">My first website</strong><span class="hang-text">“Dogite&#8209;Web — my first ever website on GitHub.” HTML, CSS and a lot of curiosity.</span></figcaption></div>
+        </figure>
+        <figure class="hang" data-cursor="grab" data-cursor-label="Pull">
+          <span class="hang-pin" aria-hidden="true"></span>
+          <div class="hang-print"><img alt="" data-motif="6" data-glyph="2022"><figcaption><span class="hang-no mono">2022 — 23</span><strong class="hang-title">Built on a phone</strong><span class="hang-text">A webcam app, a word counter, and a stopwatch written entirely on my Android phone.</span></figcaption></div>
+        </figure>
+        <figure class="hang" data-cursor="grab" data-cursor-label="Pull">
+          <span class="hang-pin" aria-hidden="true"></span>
+          <div class="hang-print"><img alt="" data-motif="5" data-glyph="Vue"><figcaption><span class="hang-no mono">2023</span><strong class="hang-title">Falling for Vue</strong><span class="hang-text">Banking UIs, a movie database, a MERN e&#8209;commerce store. Components clicked.</span></figcaption></div>
+        </figure>
+        <figure class="hang" data-cursor="grab" data-cursor-label="Pull">
+          <span class="hang-pin" aria-hidden="true"></span>
+          <div class="hang-print"><img alt="" src="images/logfolio.jpg"><figcaption><span class="hang-no mono">2026</span><strong class="hang-title">Real users</strong><span class="hang-text">LogFolio ships, and 200+ students start relying on it. Everything changes.</span></figcaption></div>
+        </figure>
+        <figure class="hang" data-cursor="grab" data-cursor-label="Pull">
+          <span class="hang-pin" aria-hidden="true"></span>
+          <div class="hang-print"><img alt="" src="images/jobizzy.jpg"><figcaption><span class="hang-no mono">2026</span><strong class="hang-title">Products, plural</strong><span class="hang-text">BidCentra, HistoNaija, Jobizzy, Kleoris, VoxLMS — and a run of studio sites.</span></figcaption></div>
+        </figure>
+        <figure class="hang hang--blank" data-cursor="grab" data-cursor-label="Pull">
+          <span class="hang-pin" aria-hidden="true"></span>
+          <div class="hang-print"><div class="blank-photo"><span class="mono">Developing…</span></div><figcaption><span class="hang-no mono">Next</span><strong class="hang-title">Your project</strong><a class="hang-cta mono" href="#contact" data-cursor="link">Let's talk →</a></figcaption></div>
+        </figure>
+      </div>
+      <p class="line-hint mono" aria-hidden="true">Grab a print and let it swing</p>
+    </section>
+
+    <!-- PLAY / PAPER FLIGHT -->
+    <section class="arcade" id="play" aria-label="Paper Flight, a small game">
+      <div class="sec-head sec-head--split">
+        <div>
+          <p class="eyebrow mono"><i>05</i> Intermission</p>
+          <h2 data-reveal>Take a break. Fly through the&nbsp;work.</h2>
+        </div>
+        <p class="sec-note" data-reveal>Paper Flight is a small game I built with Three.js. Thread the film frames, dodge the drying lines, and pass every project hanging in the studio on the&nbsp;way.</p>
+      </div>
+
+      <div class="cabinet">
+        <div class="cabinet-screen">
+          <div class="screen" id="flight" tabindex="-1" data-state="attract">
+            <canvas class="fl-canvas" aria-hidden="true"></canvas>
+            <div class="fl-boost" aria-hidden="true"></div>
+            <div class="fl-flash" aria-hidden="true"></div>
+            <div class="fl-pops" aria-hidden="true"></div>
+
+            <div class="fl-title">
+              <p class="mono fl-kicker"><span class="fl-led" aria-hidden="true"></span>1 player · free play</p>
+              <h3 class="fl-name">Paper <em>Flight</em></h3>
+              <p class="fl-blurb">Thread the cobalt frames for combos, grab gold for a boost, barrel-roll through trouble, and fly from morning into&nbsp;lamplight.</p>
+              <div class="fl-hangar" role="group" aria-label="Choose your plane"></div>
+              <div class="fl-actions">
+                <button class="btn fl-start" type="button" data-cursor="link" data-magnetic>Press start <span aria-hidden="true">▶</span></button>
+                <span class="mono fl-best">Best <b>0</b></span>
+              </div>
+              <p class="mono fl-keys fl-keys--touch"><kbd>Drag</kbd> fly · <kbd>Double-tap</kbd> barrel roll</p>
+              <p class="mono fl-keys fl-keys--desk"><kbd>Mouse</kbd><kbd>Touch</kbd><kbd>←↑→↓</kbd> fly · <kbd>Space</kbd><kbd>Double-tap</kbd> roll · <kbd>P</kbd> pause · <kbd>Esc</kbd> land</p>
+              <p class="fl-nogl">This game needs WebGL, which this browser has switched off.</p>
+              <p class="fl-offline">Couldn’t load the 3D engine — check your connection. <button class="btn btn--small fl-retry" type="button" data-cursor="link">Retry</button></p>
+              <p class="fl-loading mono">Warming up the studio…</p>
+            </div>
+
+            <div class="fl-hud" aria-hidden="true">
+              <div class="fl-scorebox">
+                <span class="mono">Score</span>
+                <b class="fl-score">0</b>
+                <span class="fl-combo mono">×1</span>
+              </div>
+              <span class="fl-dist mono">0 m</span>
+              <div class="fl-right">
+                <span class="fl-lives"></span>
+                <button class="fl-close" type="button" aria-label="Land and leave the game" data-cursor="link">✕</button>
+              </div>
+              <p class="fl-caption mono"></p>
+              <p class="fl-roll mono"><i aria-hidden="true"></i>Roll</p>
+              <div class="fl-zone"><span class="mono"></span><b></b></div>
+            </div>
+
+            <p class="fl-count" aria-live="assertive"></p>
+
+            <div class="fl-over" role="dialog" aria-label="Game over">
+              <div class="fl-card">
+                <p class="mono fl-over-kicker">Crash landing</p>
+                <p class="fl-final"><b>0</b><span class="fl-newbest mono" hidden>New best!</span></p>
+                <dl class="fl-stats">
+                  <div><dt class="mono">Frames</dt><dd class="fl-s-frames">0</dd></div>
+                  <div><dt class="mono">Distance</dt><dd class="fl-s-dist">0 m</dd></div>
+                  <div><dt class="mono">Best combo</dt><dd class="fl-s-combo">×1</dd></div>
+                  <div><dt class="mono">Projects passed</dt><dd class="fl-s-proj">0 / 6</dd></div>
+                </dl>
+                <p class="fl-unlock mono" hidden></p>
+                <div class="fl-over-actions">
+                  <button class="btn fl-again" type="button" data-cursor="link">Fly again <span aria-hidden="true">↻</span></button>
+                  <button class="btn btn--ghost fl-share" type="button" data-cursor="link"><span>Share score</span></button>
+                  <button class="btn btn--ghost fl-hire" type="button" data-cursor="link">Hire the pilot →</button>
+                </div>
+                <p class="mono fl-best-line">Best <b>0</b> · Enter to fly again</p>
+              </div>
+            </div>
+
+            <div class="fl-paused"><p class="fl-paused-title">Paused</p><button class="btn fl-resume" type="button" data-cursor="link">Resume <span aria-hidden="true">▶</span></button></div>
+          </div>
+        </div>
+        <div class="cabinet-deck">
+          <span class="deck-led" aria-hidden="true"></span>
+          <span class="deck-label mono">Paper Flight · MO&#8209;26</span>
+          <span class="deck-grille" aria-hidden="true"></span>
+          <span class="deck-best mono">Hi&#8209;score <b class="deck-hi">00000</b></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact" aria-label="Contact">
+      <div class="flood" aria-hidden="true"></div>
+      <p class="eyebrow mono"><i>06</i> Contact</p>
+      <p class="avail mono"><span class="avail-dot" aria-hidden="true"></span>Taking on new projects</p>
+      <h2 class="contact-title" data-reveal>Have something worth building?</h2>
+      <p class="contact-lede" data-reveal>Tell me what you're making. I reply within a day.</p>
+      <a class="mail" href="mailto:michaelomaleson@gmail.com" data-cursor="link" data-cursor-label="Write" data-magnetic>michaelomaleson@gmail.com</a>
+      <button class="copy-mail mono" type="button" data-copy="michaelomaleson@gmail.com" data-cursor="link"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span>Copy email</span></button>
+      <a class="phone" href="tel:+2348124994445" data-cursor="link">+234 812 499 4445</a>
+      <ul class="links mono">
+        <li><a href="https://wa.me/2348124994445" target="_blank" rel="noopener" data-cursor="link">WhatsApp ↗</a></li>
+        <li><a href="tel:+2348124994445" data-cursor="link">Call ↗</a></li>
+        <li><a href="https://github.com/Micheal-Omale" target="_blank" rel="noopener" data-cursor="link">GitHub ↗</a></li>
+        <li><a href="https://www.facebook.com/Mikeoneh" target="_blank" rel="noopener" data-cursor="link">Facebook ↗</a></li>
+        <li><a href="mailto:michaelomaleson@gmail.com" data-cursor="link">Email ↗</a></li>
+      </ul>
+      <footer class="foot">
+        <div class="foot-row mono">
+          <span>© 2026 Michael Omale</span>
+          <span>Nigeria · <time class="clock">--:--</time> WAT</span>
+          <span>Hand&#8209;built in HTML, CSS &amp; JavaScript</span>
+          <a href="#top" data-cursor="link">Back to top ↑</a>
+        </div>
+        <p class="wordmark" aria-hidden="true">Michael <em>Omale</em></p>
+      </footer>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+  <script src="js/art.js"></script>
+  <script src="js/gl.js"></script>
+  <script src="js/rope.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/planes.js"></script>
+  <script src="js/main.js"></script>
+</body>
 </html>
