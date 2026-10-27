@@ -423,7 +423,7 @@
       }
       tl.from(".top", { yPercent: -100, duration: 0.9 }, o + 0.15)
         .from(".hero .eyebrow", { y: 16, opacity: 0, duration: 0.8 }, o + 0.2)
-        .from(title.lines, { yPercent: 100, duration: 1.1, stagger: 0.09, ease: "power4.out", onComplete: () => played.push(title) }, o + 0.25)
+        .from(title.lines, { yPercent: 100, duration: 1.1, stagger: 0.09, ease: "power4.out", onComplete: () => title.revert() }, o + 0.25)
         .from(".hero-lede, .hero-ctas, .proof, .hero-extras", { y: 22, opacity: 0, duration: 0.9, stagger: 0.08 }, o + 0.55)
         .from(".hero-tray", { y: 50, opacity: 0, duration: 1.2 }, o + 0.35)
         .add(() => playReel(0), o + 0.6);
@@ -457,7 +457,7 @@
         start: "top 88%",
         once: true,
         onEnter: () =>
-          gsap.to(split.lines, { yPercent: 0, duration: 1, stagger: 0.09, ease: "power3.out", onComplete: () => played.push(split) }),
+          gsap.to(split.lines, { yPercent: 0, duration: 1, stagger: 0.09, ease: "power3.out", onComplete: () => split.revert() }),
       });
     });
 
@@ -503,7 +503,7 @@
           gsap.timeline()
             .to(media, { y: 0, opacity: 1, duration: 1.1, ease: "power3.out" }, 0)
             .to(img, { filter: D.to, duration: 2.2, ease: "develop" }, 0.15)
-            .to(title.chars, { yPercent: 0, duration: 0.9, stagger: 0.025, ease: "power3.out", onComplete: () => played.push(title) }, 0.2)
+            .to(title.chars, { yPercent: 0, duration: 0.9, stagger: 0.025, ease: "power3.out", onComplete: () => title.revert() }, 0.2)
             .to(rest, { y: 0, opacity: 1, duration: 0.8, stagger: 0.07, ease: "power3.out" }, 0.35);
         },
       });
@@ -593,6 +593,13 @@
         const paint = ({ progress }) => { P.p = progress; paintPan(P); };
         ScrollTrigger.create({ ...opts, onUpdate: paint, onRefresh: paint });
       });
+    });
+
+    // ---------- case studies: the print comes off the pile (js/study.js) ------
+    const pileMQ = matchMedia("(min-width: 901px) and (min-height: 660px)");
+    DR.study?.init({
+      gsap, lenis, reduced,
+      caseScroll: (i) => (pileMQ.matches ? flowTop(i) - stickTop(i) : pileCases[i].getBoundingClientRect().top + window.scrollY - 80),
     });
 
     // ---------- services: each row develops its proof under the cursor ------
@@ -903,6 +910,56 @@
         clearTimeout(btn._t);
         btn._t = setTimeout(() => (label.textContent = "Copy email"), 2200);
       });
+    }
+
+    // ---------- contact: a brief you fill in ---------------------------------
+    {
+      const form = document.querySelector(".brief");
+      const pencil = form.querySelector(".brief-pencil");
+      const preview = form.querySelector(".brief-preview");
+      const wa = form.querySelector(".brief-wa");
+      const mail = form.querySelector(".brief-mail");
+      const no = form.querySelector(".brief-no");
+      // numbered like a docket: today's date in Lagos
+      const day = new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Lagos", day: "2-digit", month: "2-digit" }).format(new Date()).replace("/", "");
+      no.textContent = `No. ${day}`;
+      const rings = {};
+      // a choice is circled in grease pencil; changing your mind rubs the old ring out
+      function circle(input) {
+        const label = input.closest("label").querySelector("span");
+        const box = form.getBoundingClientRect(), r = label.getBoundingClientRect();
+        // the card is turned a little; ring it in the card's own frame
+        const x = (r.left - box.left) / (box.width / form.offsetWidth), y = (r.top - box.top) / (box.height / form.offsetHeight);
+        const old = rings[input.name];
+        if (old) gsap.to(old, { opacity: 0, duration: 0.3, onComplete: () => old.remove() });
+        const path = document.createElementNS(SVGNS, "path");
+        // pencilPath overshoots its box (~1.3x), so hand it a tighter one: the ring hugs the words
+        path.setAttribute("d", pencilPath(x + r.width * 0.1, y + r.height * 0.06, r.width * 0.8, r.height * 0.88, DR.art.rng(Math.round(r.left + r.top))));
+        pencil.appendChild(path);
+        rings[input.name] = path;
+        const len = path.getTotalLength();
+        gsap.fromTo(path, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: reduced ? 0 : 0.55, ease: "power2.out" });
+      }
+      function compose() {
+        const f = new FormData(form);
+        const name = (f.get("name") || "").trim(), what = f.get("what"), when = f.get("when"), note = (f.get("note") || "").trim();
+        const parts = ["Hi Michael —"];
+        if (name) parts.push(`I'm ${name}.`);
+        if (what) parts.push(`I need ${what}${when ? ", " + when : ""}.`);
+        else if (when) parts.push(`I'm planning something, ${when}.`);
+        if (note) parts.push(/[.!?]$/.test(note) ? note : note + ".");
+        const text = parts.length > 1 ? parts.join(" ") : "";
+        preview.textContent = text || "Pick what you need and it writes the message for you.";
+        preview.classList.toggle("is-empty", !text);
+        const body = text || "Hi Michael — ";
+        wa.href = `https://wa.me/2348124994445?text=${encodeURIComponent(body)}`;
+        mail.href = `mailto:michaelomaleson@gmail.com?subject=${encodeURIComponent("Project brief" + (what ? " — " + what : ""))}&body=${encodeURIComponent(body)}`;
+      }
+      form.addEventListener("change", (e) => { if (e.target.type === "radio") circle(e.target); compose(); });
+      form.addEventListener("input", compose);
+      form.addEventListener("submit", (e) => e.preventDefault());
+      relayouts.push(() => form.querySelectorAll("input:checked").forEach((i) => { rings[i.name]?.remove(); delete rings[i.name]; circle(i); }));
+      compose();
     }
 
     // ---------- hero tray leans toward the pointer --------------------------

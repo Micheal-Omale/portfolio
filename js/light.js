@@ -228,7 +228,8 @@ void main() {
         writeCss(cur);
 
         wind += (Math.min(1, Math.abs(v) / 45) * CFG.wind.gain - wind) * Math.min(1, dt * CFG.wind.settle);
-        const scroll = ((lenis ? lenis.scroll : scrollY) / innerHeight) * CFG.parallax;
+        // extra: a scrolled overlay (the case study) walks you past the windows too
+        const scroll = (((lenis ? lenis.scroll : scrollY) + (this.extra || 0)) / innerHeight) * CFG.parallax;
         const time = reduced ? 0 : t;
         // reduced motion: redraw only when something actually changed
         if (reduced) {

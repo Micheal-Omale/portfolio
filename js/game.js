@@ -18,6 +18,19 @@
     fog: [34, 168],
     lives: 3,
     maxCombo: 6,
+    // the combo climbs one step per `per` frames in a row, so ×6 is earned, not given
+    combo: { per: 3 },
+    // difficulty: seconds flown, plus a jump at every checkpoint
+    difficulty: { time: 95, zone: 0.14 },
+    // the opening in a drying line narrows as the run goes on (half-width)
+    gap: [1.4, 1.0],
+    // a lure: the trail of frames leads at the wall, and the gap is yours to find
+    bait: { start: 6, p: [0.22, 0.5] },
+    // a risky frame: small, threaded just over the line or under the prints, worth double
+    risk: { p: [0.2, 0.45], scale: 0.72, points: 2 },
+    // frames thin out as they reach the lens, so they never hide what's next
+    fade: { from: -7, min: 0.3 },
+    tally: 0.7, // seconds a points pop keeps adding before it floats away
     points: { frame: 10, gold: 60, close: 25, perUnit: 0.2 },
     boostTime: 3.5,
     invuln: 1.6,
@@ -46,8 +59,8 @@
     // the hangar: planes unlocked by best score
     skins: [
       { id: "paper", name: "Paper", need: 0, body: 0xfffdf9, edge: 0x17150f, trail: 0x2b45ff, rough: 0.9, metal: 0 },
-      { id: "cobalt", name: "Cobalt", need: 1500, body: 0x3550ff, edge: 0x0b1466, trail: 0xe8b04a, rough: 0.6, metal: 0.1 },
-      { id: "gold", name: "Gold leaf", need: 5000, body: 0xe2a93c, edge: 0x6b4508, trail: 0x2b45ff, rough: 0.32, metal: 0.75 },
+      { id: "cobalt", name: "Cobalt", need: 3000, body: 0x3550ff, edge: 0x0b1466, trail: 0xe8b04a, rough: 0.6, metal: 0.1 },
+      { id: "gold", name: "Gold leaf", need: 10000, body: 0xe2a93c, edge: 0x6b4508, trail: 0x2b45ff, rough: 0.32, metal: 0.75 },
     ],
   };
 
@@ -328,26 +341,28 @@
           return tex(c);
         };
         const frameGeo = new THREE.PlaneGeometry(2.8, 2.1);
-        const frameMat = new THREE.MeshBasicMaterial({ map: frameTex("#2b45ff"), alphaTest: 0.5, side: THREE.DoubleSide });
-        const goldMat = new THREE.MeshBasicMaterial({ map: frameTex("#e8b04a"), alphaTest: 0.5, side: THREE.DoubleSide });
+        const frameMat = new THREE.MeshBasicMaterial({ map: frameTex("#2b45ff"), alphaTest: 0.02, transparent: true, side: THREE.DoubleSide });
+        const goldMat = new THREE.MeshBasicMaterial({ map: frameTex("#e8b04a"), alphaTest: 0.02, transparent: true, side: THREE.DoubleSide });
         const glowMat = new THREE.SpriteMaterial({ map: softTex("rgba(255,214,120,0.9)"), transparent: true, depthWrite: false });
         const frames = Array.from({ length: 44 }, () => {
-          const mesh = new THREE.Mesh(frameGeo, frameMat);
+          const mats = { blue: frameMat.clone(), gold: goldMat.clone() };
+          const mesh = new THREE.Mesh(frameGeo, mats.blue);
           const glow = new THREE.Sprite(glowMat);
           glow.scale.set(5, 4, 1);
           glow.visible = false;
           mesh.add(glow);
           mesh.visible = false;
           scene.add(mesh);
-          return { mesh, glow, alive: false, taken: false, x: 0, y: 0, z: 0, row: null, gold: false, ph: 0 };
+          return { mesh, glow, mats, alive: false, taken: false, x: 0, y: 0, z: 0, row: null, gold: false, risk: false, s: 1, ph: 0 };
         });
-        function spawnFrame(x, y, z, row = null, gold = false) {
+        function spawnFrame(x, y, z, row = null, gold = false, risk = false) {
           const f = frames.find((o) => !o.alive);
           if (!f) return;
-          Object.assign(f, { alive: true, taken: false, x, y, z, row, gold, ph: Math.random() * 6 });
-          f.mesh.material = gold ? goldMat : frameMat;
+          Object.assign(f, { alive: true, taken: false, x, y, z, row, gold, risk, s: risk ? CFG.risk.scale : 1, ph: Math.random() * 6 });
+          f.mesh.material = gold ? f.mats.gold : f.mats.blue;
+          f.mesh.material.opacity = 1;
           f.glow.visible = gold;
-          f.mesh.scale.setScalar(gold ? 1.08 : 1);
+          f.mesh.scale.setScalar((gold ? 1.08 : 1) * f.s);
           f.mesh.visible = true;
         }
 
@@ -435,14 +450,14 @@
           scene.add(g);
           return { g, sheets, alive: false, z: 0, yL: 0, offset: 0, swing: 0, ph: 0, crossed: false };
         });
-        function spawnRow(z, yL, gapX, swing) {
+        function spawnRow(z, yL, gapX, swing, gapW = R.gap) {
           const r = rows.find((o) => !o.alive);
           if (!r) return null;
-          Object.assign(r, { alive: true, z, yL, swing, ph: Math.random() * 6, offset: 0, crossed: false });
+          Object.assign(r, { alive: true, z, yL, swing, ph: Math.random() * 6, offset: 0, crossed: false, gapX, gapY: 0 });
           r.g.position.set(0, yL, z);
           let k = 0;
           for (let x = -R.span; x <= R.span && k < R.max; x += R.pitch) {
-            if (Math.abs(x - gapX) < R.gap + R.sheetW / 2) continue;
+            if (Math.abs(x - gapX) < gapW + R.sheetW / 2) continue;
             const s = r.sheets[k++];
             s.visible = true;
             s.position.set(x, 0, 0);
@@ -532,10 +547,10 @@
         const B = { ...CFG.bounds };
         const S = {
           state: "attract", t: 0, run: 0, speed: CFG.speed.start, speedMul: 1, dist: 0,
-          score: 0, shown: -1, combo: 1, bestCombo: 1, frames: 0, lives: CFG.lives,
+          score: 0, shown: -1, combo: 1, chain: 0, bestCombo: 1, frames: 0, lives: CFG.lives,
           invuln: 0, boost: 0, shake: 0, safe: { x: 0, y: 0.6 }, spawnIn: 20, boardIn: 6, boardIdx: 0,
           passed: new Set(), fov: CFG.camera.fov, baseFov: CFG.camera.fov, auto: { x: 0, y: 0.6 },
-          roll: 0, rollCd: 0, rollDir: 1, slow: 0, ts: 1, punch: 0, zone: 0, amb: 0, lastTap: 0,
+          roll: 0, rollCd: 0, rollDir: 1, slow: 0, ts: 1, punch: 0, zone: 0, amb: 0, lastTap: 0, seen: { rows: 0, lures: 0 },
         };
 
         // ---------- the hangar ------------------------------------------------------------
@@ -605,7 +620,7 @@
           S.safe = b;
           return n * 9 + lerp(20, 10, d);
         }
-        function rowAt(z, d, from) {
+        function rowAt(z, d, from, signpost = true) {
           const kind = pick(["high", "mid", "low"]);
           let yL = kind === "high" ? B.yMax + 0.5 : kind === "mid" ? rand(1.4, 2.2) : rand(-0.2, 0.5);
           // some lines are hung where the player is flying, more as the run goes on: keep moving
@@ -615,23 +630,39 @@
             y: clamp(yL - 1.0, B.yMin + 0.5, B.yMax - 0.4),
           };
           const swing = S.state === "play" && d > 0.3 && Math.random() < 0.25 + 0.35 * d ? rand(0.8, 1.4) * W : 0;
-          const r = spawnRow(z, yL, gap.x, swing);
-          if (r) spawnFrame(gap.x, gap.y, z, r);
+          const r = spawnRow(z, yL, gap.x, swing, lerp(CFG.gap[0], CFG.gap[1], d));
+          if (r) {
+            r.gapY = gap.y;
+            if (signpost) spawnFrame(gap.x, gap.y, z, r);
+            // a risky frame, threaded just over the line or just under the prints
+            if (S.state === "play" && Math.random() < lerp(CFG.risk.p[0], CFG.risk.p[1], d)) {
+              const over = yL + 0.62, under = yL - R.sheetH - 0.62;
+              const ry = over < B.yMax - 0.2 ? over : under > B.yMin + 0.3 ? under : null;
+              if (ry !== null) spawnFrame(clamp(gap.x + rand(-4, 4) * W, -B.x + 0.8, B.x - 0.8), ry, z, r, false, true);
+            }
+          }
           return gap;
         }
         function rowChunk(z0, d) {
           const a = S.safe;
-          let gap = rowAt(z0 - 32, d, a);
+          // the trail can lie: it leads at the wall, and there's no frame in the gap —
+          // read the hanging prints and find the opening yourself
+          const luring = S.state === "play" && S.run > CFG.bait.start && Math.random() < lerp(CFG.bait.p[0], CFG.bait.p[1], d);
+          let gap = rowAt(z0 - 32, d, a, !luring);
+          S.seen.rows++; // tuning counters (DR.debug.flight.S.seen)
+          if (luring) S.seen.lures++;
+          const lure = luring ? { x: clamp(gap.x - Math.sign(gap.x || 1) * rand(2.4, 3.6) * W, -B.x + 0.8, B.x - 0.8), y: gap.y } : gap;
           for (let i = 0; i < 3; i++) {
             const t = (i + 1) / 4;
-            spawnFrame(lerp(a.x, gap.x, t), lerp(a.y, gap.y, t), z0 - i * 9);
+            spawnFrame(lerp(a.x, lure.x, t), lerp(a.y, lure.y, t), z0 - i * 9);
           }
-          let len = 32;
-          if (S.state === "play" && d > 0.45 && Math.random() < 0.4) {
+          let len = 32, after = luring ? lure : gap; // a lure's trail picks up again on its own side
+          if (S.state === "play" && d > 0.35 && Math.random() < 0.3 + 0.4 * d) {
             gap = rowAt(z0 - 46, d, gap);
+            after = gap;
             len += 14;
           }
-          S.safe = gap;
+          S.safe = after;
           return len + lerp(24, 12, d);
         }
         function goldChunk(z0) {
@@ -641,10 +672,11 @@
           return 26;
         }
         function spawnChunk() {
-          const d = clamp(S.run / 110, 0, 1);
+          const d = clamp(S.run / CFG.difficulty.time + S.zone * CFG.difficulty.zone, 0, 1);
           const r = Math.random();
           if (S.state === "play" && S.run < 5) return pathChunk(CFG.spawnZ, d);
-          if (r < 0.42 + 0.3 * d) return rowChunk(CFG.spawnZ, d);
+          // drying lines are the game: most stretches have one, nearly all of them late on
+          if (r < 0.58 + 0.27 * d) return rowChunk(CFG.spawnZ, d);
           if (r > 0.93) return goldChunk(CFG.spawnZ);
           return pathChunk(CFG.spawnZ, d);
         }
@@ -669,10 +701,35 @@
           gsap.fromTo(el, { yPercent: -50, y: 0, scale: 0.6, opacity: 0 }, { y: -26, scale: 1, opacity: 1, duration: 0.28, ease: "back.out(2.5)" });
           gsap.to(el, { y: -70, opacity: 0, duration: 0.5, delay: 0.45, ease: "power2.in", onComplete: () => el.remove() });
         }
+        // one running total per burst of frames: "+60 +60 +60" becomes a single "+180"
+        const tally = { el: null, sum: 0, t: -9, out: null };
+        function popTally(pts, x, y, z, cls) {
+          if (tally.el && S.t - tally.t < CFG.tally) {
+            tally.sum += pts;
+            tally.t = S.t;
+            tally.el.textContent = `+${fmt(tally.sum)}`;
+            if (cls) tally.el.classList.add(cls);
+            gsap.fromTo(tally.el, { scale: 1.3 }, { scale: 1, duration: 0.3, ease: "back.out(3)", overwrite: "auto" });
+            tally.out.restart(true);
+            return;
+          }
+          v3.set(x, y, z).project(camera);
+          const el = document.createElement("span");
+          el.className = `fl-pop ${cls}`;
+          el.textContent = `+${fmt(pts)}`;
+          el.style.left = `${((v3.x + 1) / 2) * 100}%`;
+          el.style.top = `${((1 - v3.y) / 2) * 100}%`;
+          ui.pops.appendChild(el);
+          gsap.fromTo(el, { yPercent: -50, y: 0, scale: 0.6, opacity: 0 }, { y: -26, scale: 1, opacity: 1, duration: 0.28, ease: "back.out(2.5)" });
+          tally.out = gsap.to(el, { y: -70, opacity: 0, duration: 0.5, delay: CFG.tally, ease: "power2.in", onComplete: () => { el.remove(); if (tally.el === el) tally.el = null; } });
+          Object.assign(tally, { el, sum: pts, t: S.t });
+        }
         function showCombo() {
+          const per = CFG.combo.per;
+          ui.combo.style.setProperty("--chain", S.combo >= CFG.maxCombo ? 1 : ((S.chain % per) / per).toFixed(3));
           ui.combo.textContent = `×${S.combo}`;
-          ui.combo.classList.toggle("is-on", S.combo > 1);
-          if (S.combo > 1) gsap.fromTo(ui.combo, { scale: 1.5 }, { scale: 1, duration: 0.4, ease: "back.out(3)" });
+          ui.combo.classList.toggle("is-on", S.combo > 1 || S.chain > 0);
+          if (S.combo > 1 && S.chain % CFG.combo.per === 0) gsap.fromTo(ui.combo, { scale: 1.5 }, { scale: 1, duration: 0.4, ease: "back.out(3)" });
         }
         function showLives() {
           ui.lives.innerHTML = Array.from({ length: CFG.lives }, (_, i) =>
@@ -749,8 +806,8 @@
           gsap.killTweensOf(P); // a crash still tumbling must not finish into a game over
           gsap.killTweensOf(S);
           clearWorld();
-          Object.assign(S, { run: 0, speed: CFG.speed.start, speedMul: 1, dist: 0, score: 0, shown: -1, combo: 1, bestCombo: 1, frames: 0,
-            lives: CFG.lives, invuln: 0, boost: 0, spawnIn: 34, passed: new Set(), roll: 0, rollCd: 0, slow: 0, ts: 1, punch: 0, zone: 0 });
+          Object.assign(S, { run: 0, speed: CFG.speed.start, speedMul: 1, dist: 0, score: 0, shown: -1, combo: 1, chain: 0, bestCombo: 1, frames: 0,
+            lives: CFG.lives, invuln: 0, boost: 0, spawnIn: 34, passed: new Set(), seen: { rows: 0, lures: 0 }, roll: 0, rollCd: 0, slow: 0, ts: 1, punch: 0, zone: 0 });
           lightAt = -1;
           P.tumble = 0;
           plane.visible = true;
@@ -791,6 +848,7 @@
           buzz(70);
           S.lives--;
           S.combo = 1;
+          S.chain = 0;
           showCombo();
           showLives();
           S.invuln = CFG.invuln;
@@ -925,9 +983,13 @@
           let tx, ty;
           if (S.state === "attract" || S.autoplay) {
             // autopilot: aim for the nearest frame ahead, else drift
-            let goal = null;
-            for (const f of frames) if (f.alive && !f.taken && f.z < -2 && (!goal || f.z > goal.z)) goal = f;
-            if (goal) { S.auto.x = goal.x + (goal.row ? goal.row.offset : 0); S.auto.y = goal.y; }
+            // a drying line close ahead wins: fly for its gap, whatever the frames say
+            let goal = null, wall = null;
+            for (const r of rows) if (r.alive && r.z < -1 && r.z > -26 && (!wall || r.z > wall.z)) wall = r;
+            for (const f of frames) if (f.alive && !f.taken && !f.risk && f.z < -2 && (!goal || f.z > goal.z)) goal = f;
+            // (DR.debug.flight.autoplay("greedy") chases frames only — to test the lures)
+            if (wall && S.autoplay !== "greedy") { S.auto.x = wall.gapX + wall.offset; S.auto.y = wall.gapY; }
+            else if (goal) { S.auto.x = goal.x + (goal.row ? goal.row.offset : 0); S.auto.y = goal.y; }
             else { S.auto.x = Math.sin(S.t * 0.5) * B.x * 0.5; S.auto.y = 0.6 + Math.sin(S.t * 0.8) * 1.2; }
             tx = S.auto.x; ty = S.auto.y;
           } else {
@@ -968,13 +1030,17 @@
             f.z += dz;
             const fx = f.x + (f.row ? f.row.offset : 0);
             f.mesh.position.set(fx, f.y + Math.sin(S.t * 2 + f.ph) * 0.08, f.z);
-            if (!f.taken) f.mesh.rotation.z = Math.sin(S.t * 1.3 + f.ph) * 0.06 + (f.gold ? S.t * 0.8 : 0);
-            if (z0 < 0 && f.z >= 0 && !f.taken) {
-              const inside = Math.abs(P.x - fx) < CFG.frameWindow.w && Math.abs(P.y - f.y) < CFG.frameWindow.h;
-              if (inside && (playing || S.state === "attract")) collect(f, fx);
-              else if (playing && !f.gold) { S.combo = 1; showCombo(); }
+            if (!f.taken) {
+              f.mesh.rotation.z = Math.sin(S.t * 1.3 + f.ph) * 0.06 + (f.gold ? S.t * 0.8 : 0);
+              f.mesh.material.opacity = f.z > CFG.fade.from ? Math.max(CFG.fade.min, f.z / CFG.fade.from) : 1;
             }
-            if (f.z > 1.4 && !f.taken) { f.alive = false; f.mesh.visible = false; } // gone once it is behind the plane
+            if (z0 < 0 && f.z >= 0 && !f.taken) {
+              const inside = Math.abs(P.x - fx) < CFG.frameWindow.w * f.s && Math.abs(P.y - f.y) < CFG.frameWindow.h * f.s;
+              if (inside && (playing || S.state === "attract")) collect(f, fx);
+              // missing a frame breaks the chain; passing up a risky one is a fair choice
+              else if (playing && !f.gold && !f.risk) { S.combo = 1; S.chain = 0; showCombo(); }
+            }
+            if (f.z > 0.3 && !f.taken) { f.alive = false; f.mesh.visible = false; } // gone the moment it's behind the plane
           }
 
           // ----- rows
@@ -1116,12 +1182,14 @@
           gsap.to(f.mesh.rotation, { z: f.mesh.rotation.z + 1.2, duration: 0.22, ease: "power2.in" });
           burst(fx, f.y, f.z - 0.5, f.gold ? 40 : 18, f.gold ? [palette[4], palette[0]] : [palette[3], palette[0]]);
           if (S.state !== "play") return;
-          const pts = (f.gold ? CFG.points.gold : CFG.points.frame) * S.combo * (S.boost > 0 ? 2 : 1);
+          const pts = (f.gold ? CFG.points.gold : CFG.points.frame) * (f.risk ? CFG.risk.points : 1) * S.combo * (S.boost > 0 ? 2 : 1);
           S.score += pts;
-          buzz(f.gold ? 30 : 8);
+          buzz(f.gold ? 30 : f.risk ? 16 : 8);
           S.frames++;
-          pop(`+${pts}`, fx, f.y + 0.9, f.z, f.gold ? "is-gold" : "");
-          S.combo = Math.min(CFG.maxCombo, S.combo + 1);
+          popTally(pts, fx, f.y + 0.9, f.z, f.gold ? "is-gold" : "");
+          if (f.risk) pop("Risky ×2", fx, f.y + 1.5, f.z, "is-close");
+          S.chain++;
+          S.combo = Math.min(CFG.maxCombo, 1 + Math.floor(S.chain / CFG.combo.per));
           S.bestCombo = Math.max(S.bestCombo, S.combo);
           showCombo();
           gsap.fromTo(ui.score, { scale: 1.18 }, { scale: 1, duration: 0.35, ease: "back.out(3)" });
@@ -1151,7 +1219,7 @@
             // rolled clean through it
             if (struck !== "line") gsap.to(struck.rotation, { x: -1.1, duration: 0.45, ease: "power2.out" });
             S.score += CFG.roll.bonus;
-            pop(`Barrel roll! +${CFG.roll.bonus}`, P.x, P.y + 1.2, -1, "is-roll");
+            pop(`Barrel roll! +${CFG.roll.bonus}`, P.x, P.y + 1.9, -1, "is-roll");
             slowmo();
             return;
           }
@@ -1162,7 +1230,7 @@
           near = Math.min(near, Math.abs(py - r.yL) - 0.1 - hh);
           if (near < 0.45) {
             S.score += CFG.points.close;
-            pop(`Close call +${CFG.points.close}`, P.x, P.y + 1.2, -1, "is-close");
+            pop(`Close call +${CFG.points.close}`, P.x, P.y + 1.9, -1, "is-close");
             slowmo();
           }
         }
