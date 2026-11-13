@@ -953,7 +953,7 @@
         preview.classList.toggle("is-empty", !text);
         const body = text || "Hi Michael — ";
         wa.href = `https://wa.me/2348124994445?text=${encodeURIComponent(body)}`;
-        mail.href = `mailto:michaelomaleson@gmail.com?subject=${encodeURIComponent("Project brief" + (what ? " — " + what : ""))}&body=${encodeURIComponent(body)}`;
+        mail.href = `mailto:hello@michaeloneh.xyz?subject=${encodeURIComponent("Project brief" + (what ? " — " + what : ""))}&body=${encodeURIComponent(body)}`;
       }
       form.addEventListener("change", (e) => { if (e.target.type === "radio") circle(e.target); compose(); });
       form.addEventListener("input", compose);
@@ -984,6 +984,9 @@
 
     // ---------- paper planes that travel down the page with you (js/planes.js)
     DR.planes?.init({ gsap, lenis, reduced, finePointer, tickers });
+
+    // ---------- the tender desk: pipeline demo + back-planner (js/tender.js)
+    DR.desk?.init({ gsap, ScrollTrigger, reduced });
 
     // ---------- play: Paper Flight (js/game.js) -----------------------------
     DR.flight?.init({ THREE, gsap, lenis, reduced, tickers });
