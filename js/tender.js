@@ -42,18 +42,49 @@
     const panels = $$(".panel", board);
     const ink = $(".pipe-ink", board);
     const stage = $(".desk-stage", board);
+    const logBox = $(".desk-log", board);
+    const logList = $(".log-lines", board);
     const N = tabs.length;
 
     let cur = -1;
     let tl = null;
+    let inkTween = null;
     let timer = 0;
-    let autoplay = false;
-    let sliderTween = null; // kept for show(); the pipeline has no live sliders any more
+    let autoplay = false;   // the board is playing itself
+    let parked = false;     // autoplay paused because the board left the screen
+    let runClock = 0;       // seconds into the sample run, for the log timestamps
 
     const stopAuto = () => {
       autoplay = false;
+      parked = false;
       clearTimeout(timer);
+      logBox.classList.remove("is-live");
     };
+
+    // ---- run log: one line at a time, the old one slides up and out
+    const stamp = (s) => `+${pad(Math.floor(s / 60))}:${pad(Math.floor(s % 60))}`;
+    function log(html, dt = 3) {
+      runClock += dt;
+      const li = document.createElement("li");
+      li.innerHTML = `<time>${stamp(runClock)}</time>${html}`;
+      const old = [...logList.children];
+      logList.appendChild(li);
+      if (reduced) {
+        old.forEach((o) => o.remove());
+        return;
+      }
+      gsap.fromTo(li, { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.45, ease: "power3.out" });
+      old.forEach((o) => gsap.to(o, { yPercent: -110, opacity: 0, duration: 0.3, ease: "power2.in", onComplete: () => o.remove() }));
+    }
+    // log lines a stage writes as it plays (sample run; shape follows the real job)
+    const LOG = [
+      [[0.1, "run started · searching <b>8</b> care phrases, newest first"], [1.3, "<b>5</b> new notices · checked against the site for duplicates"], [2.9, "<b>2</b> picked · 3 skipped with a one-line reason"]],
+      [[0.1, "registered interest · <b>6</b> documents downloaded"], [1.4, "PDF, Word and Excel converted to text"], [2.4, "facts digest written · <b>6</b> key facts"]],
+      [[0.1, "filling the Tender Eligibility Form from the digest"], [2.0, "insurance levels conflict · cell flagged amber"], [3.6, "form complete · <b>33</b> rows, every answer sourced"]],
+      [[0.1, "checking every figure and date against the documents"], [2.6, "all checks passed · <b>2</b> missing fields listed"]],
+      [[0.1, "documents and form filed to the Drive folder"], [0.9, "draft created on bidcentra.co.uk · <b>ready for review</b>"], [2.2, "run finished · waiting for a person to approve"]],
+    ];
+    const addLog = (t, i) => LOG[i].forEach(([at, line]) => t.add(() => log(line), at));
 
     // ---- stamp: a soft thud, never a shake that moves the layout
     function thud(el) {
@@ -62,21 +93,20 @@
       gsap.fromTo(stage, { y: 0 }, { y: 3, duration: 0.05, delay: 0.42, yoyo: true, repeat: 3, ease: "none", clearProps: "transform" });
     }
 
-    // ---- stage 1: find the notices, then judge each one against the rules
+    // ---- 01 source: find the notices, then judge each one against the rules
     function buildSource() {
       const rows = $$(".notice", board);
       const t = gsap.timeline();
       rows.forEach((row) => {
         row.classList.remove("is-pass", "is-pursue");
-        gsap.set(row, { opacity: 0, y: 16 });
-        gsap.set($(".why", row), { opacity: 0 });
-        gsap.set($(".tag", row), { opacity: 0, scale: 0.6 });
+        gsap.set(row, { opacity: 0, y: 14 });
+        gsap.set([$(".why", row), $(".tag", row)], { opacity: 0 });
+        gsap.set($(".tag", row), { scale: 0.6 });
       });
-      rows.forEach((row, i) => t.to(row, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, i * 0.16));
-      // the decisions land one by one once everything has been read
+      rows.forEach((row, i) => t.to(row, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.1 + i * 0.14));
       rows.forEach((row, i) => {
         const pick = row.dataset.pick === "1";
-        const at = 1.5 + i * 0.35;
+        const at = 1.5 + i * 0.32;
         t.add(() => row.classList.add(pick ? "is-pursue" : "is-pass"), at);
         t.to($(".why", row), { opacity: 1, duration: 0.3 }, at);
         t.to($(".tag", row), { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, at);
@@ -84,7 +114,7 @@
       return t;
     }
 
-    // ---- stage 2: every document read, then the facts digest
+    // ---- 02 read: every document read, then the facts digest
     function buildRead() {
       const files = $$(".files li", board);
       const lines = $$(".digest-lines li", board);
@@ -97,17 +127,18 @@
       gsap.set(lines, { opacity: 0, y: 8 });
       const t = gsap.timeline();
       files.forEach((li, i) => {
-        t.to(li, { opacity: 1, x: 0, duration: 0.35, ease: "power3.out" }, 0.1 + i * 0.22);
-        t.to($("b", li), { opacity: 1, duration: 0.25 }, 0.45 + i * 0.22);
+        t.to(li, { opacity: 1, x: 0, duration: 0.35, ease: "power3.out" }, 0.1 + i * 0.2);
+        t.to($("b", li), { opacity: 1, duration: 0.25 }, 0.5 + i * 0.2);
       });
-      const base = 0.2 + files.length * 0.22;
-      lines.forEach((li, i) => t.to(li, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, base + i * 0.2));
-      const o = { v: 0 };
-      t.to(o, { v: lines.length, duration: lines.length * 0.2, ease: "none", onUpdate: () => (n.textContent = Math.round(o.v)) }, base);
+      const base = 0.3 + files.length * 0.2;
+      lines.forEach((li, i) => {
+        t.to(li, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, base + i * 0.2);
+        t.add(() => (n.textContent = i + 1), base + i * 0.2);
+      });
       return t;
     }
 
-    // ---- stage 3: the eligibility form fills itself, gaps get flagged
+    // ---- 03 write: answers type in, each one shows where it came from
     function buildWrite() {
       const rows = $$(".frow:not(.frow--head)", board);
       const totalN = $(".mt-n", board);
@@ -118,52 +149,44 @@
         gsap.set(totalBar, { scaleX: v });
       };
       rows.forEach((row) => {
-        const chip = $(".chip", row);
-        chip.textContent = "Open";
-        chip.dataset.s = "open";
-        $(".fa", row).textContent = "";
+        const fa = $(".fa", row), src = $(".src", row);
+        fa.textContent = "";
+        fa.classList.remove("is-typing");
+        src.textContent = row.dataset.src;
+        src.classList.remove("is-on");
         row.classList.remove("is-flag");
-        gsap.set(row, { opacity: 0, y: 10 });
+        gsap.set(row, { opacity: 0.35 });
       });
       paint(0);
       const t = gsap.timeline();
-      const prog = { v: 0 };
+      const step = 0.62;
       rows.forEach((row, i) => {
         const text = row.dataset.fill;
-        const flag = $(".chip", row).hasAttribute("data-flag");
+        const fa = $(".fa", row);
         const o = { v: 0 };
-        const at = 0.15 + i * 0.55;
-        t.to(row, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, at);
+        const at = 0.15 + i * step;
+        t.to(row, { opacity: 1, duration: 0.25 }, at);
+        t.add(() => fa.classList.add("is-typing"), at);
+        t.to(o, { v: 1, duration: 0.55, ease: "none", onUpdate: () => (fa.textContent = text.slice(0, Math.round(o.v * text.length))) }, at);
         t.add(() => {
-          $(".chip", row).dataset.s = "draft";
-          $(".chip", row).textContent = "Writing";
-        }, at + 0.1);
-        t.to(o, {
-          v: 1,
-          duration: 0.9,
-          ease: "none",
-          onUpdate: () => ($(".fa", row).textContent = text.slice(0, Math.round(o.v * text.length))),
-        }, at + 0.1);
-        t.add(() => {
-          const chip = $(".chip", row);
-          chip.dataset.s = flag ? "flag" : "ready";
-          chip.textContent = flag ? "Flagged" : "Filled";
-          row.classList.toggle("is-flag", flag);
-        }, at + 1.05);
+          fa.classList.remove("is-typing");
+          $(".src", row).classList.add("is-on");
+          if (row.hasAttribute("data-flag")) row.classList.add("is-flag");
+        }, at + 0.58);
       });
-      t.to(prog, { v: 1, duration: 0.15 + rows.length * 0.55 + 0.9, ease: "none", onUpdate: () => paint(prog.v) }, 0.1);
+      const prog = { v: 0 };
+      t.to(prog, { v: 1, duration: 0.15 + rows.length * step + 0.4, ease: "none", onUpdate: () => paint(prog.v) }, 0.1);
       return t;
     }
 
-    // ---- stage 4: verification checklist + gaps handed to the approver
+    // ---- 04 verify: checklist, then gaps handed to the approver
     function buildVerify() {
       const items = $$(".checks li", board);
-      const path = (li) => $("path", li);
       const gapN = $(".mock-n", board);
       gapN.textContent = "0";
       items.forEach((li) => {
         li.classList.remove("is-ok");
-        const p = path(li);
+        const p = $("path", li);
         const len = p.getTotalLength();
         p.style.strokeDasharray = len;
         p.style.strokeDashoffset = len;
@@ -172,30 +195,54 @@
       });
       const t = gsap.timeline();
       items.forEach((li, i) => {
-        const at = 0.2 + i * 0.5;
+        const at = 0.15 + i * 0.42;
         t.to(li, { opacity: 1, x: 0, duration: 0.35, ease: "power3.out" }, at);
-        t.to(path(li), { strokeDashoffset: 0, duration: 0.4, ease: "power2.out" }, at + 0.25);
-        t.add(() => li.classList.add("is-ok"), at + 0.3);
-        t.to($("circle", li), { opacity: 1, duration: 0.2 }, at + 0.3);
+        t.to($("path", li), { strokeDashoffset: 0, duration: 0.35, ease: "power2.out" }, at + 0.2);
+        t.add(() => li.classList.add("is-ok"), at + 0.25);
+        t.to($("circle", li), { opacity: 1, duration: 0.2 }, at + 0.25);
       });
-      const o = { v: 0 };
-      t.to(o, { v: 2, duration: 0.8, ease: "none", onUpdate: () => (gapN.textContent = Math.round(o.v)) }, 0.2 + items.length * 0.5);
+      const end = 0.15 + items.length * 0.42;
+      t.add(() => (gapN.textContent = "1"), end + 0.1);
+      t.add(() => (gapN.textContent = "2"), end + 0.4);
       return t;
     }
 
-    // ---- stage 5: filed, drafted, waiting for a person
+    // ---- 05 file: the draft lands in the admin, waiting for a person
     function buildFile() {
+      const draft = $(".draft", board);
       const lines = $$(".submit-lines li", board);
       const st = $(".stamp--big", board);
       gsap.set(st, { opacity: 0 });
-      gsap.set(lines, { opacity: 0, y: 10 });
+      gsap.set(draft, { opacity: 0, y: 26, rotation: 1.2 });
+      gsap.set(lines, { opacity: 0 });
       const t = gsap.timeline();
-      t.to(lines, { opacity: 1, y: 0, duration: 0.45, stagger: 0.16, ease: "power3.out" }, 0.1);
-      t.add(() => thud(st), 1.1);
+      t.to(draft, { opacity: 1, y: 0, rotation: 0, duration: 0.7, ease: "power3.out" }, 0.1);
+      t.to(lines, { opacity: 1, duration: 0.3, stagger: 0.1 }, 0.5);
+      t.add(() => thud(st), 1.4);
       return t;
     }
 
     const builders = [buildSource, buildRead, buildWrite, buildVerify, buildFile];
+
+    // ---- lock the stage to its tallest panel so nothing below jumps
+    function lockHeight() {
+      stage.style.minHeight = "";
+      const visible = panels.map((p) => p.hidden);
+      let max = 0;
+      panels.forEach((p) => {
+        p.hidden = false;
+        p.style.position = "absolute";
+        p.style.visibility = "hidden";
+        p.style.width = `${stage.clientWidth - parseFloat(getComputedStyle(stage).paddingLeft) * 2}px`;
+        max = Math.max(max, p.offsetHeight);
+      });
+      panels.forEach((p, k) => {
+        p.style.position = p.style.visibility = p.style.width = "";
+        p.hidden = visible[k];
+      });
+      const pad = parseFloat(getComputedStyle(stage).paddingTop) + parseFloat(getComputedStyle(stage).paddingBottom);
+      stage.style.minHeight = `${Math.ceil(max + pad)}px`;
+    }
 
     // ---- stage switching
     function show(i, { force = false, instant = false } = {}) {
@@ -203,32 +250,50 @@
       const prevPanel = panels[cur];
       cur = i;
       tl?.kill();
-      sliderTween?.kill();
+      inkTween?.kill();
       tabs.forEach((tab, k) => {
         tab.setAttribute("aria-selected", String(k === i));
         tab.tabIndex = k === i ? 0 : -1;
         tab.classList.toggle("is-done", k < i);
       });
-      gsap.to(ink, { scaleX: (i + 1) / N, duration: reduced || instant ? 0 : 0.8, ease: "power3.out" });
       panels.forEach((p, k) => (p.hidden = k !== i));
       const panel = panels[i];
-      if (!reduced && !instant && prevPanel !== panel) gsap.fromTo(panel, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", clearProps: "transform" });
+      if (!reduced && !instant && prevPanel !== panel) gsap.fromTo(panel, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", clearProps: "transform" });
       tl = builders[i]();
-      if (reduced || instant) tl.progress(1);
-      else if (autoplay) schedule(i, tl.duration());
+      if (!instant) addLog(tl, i);
+      if (reduced || instant) {
+        tl.progress(1);
+        gsap.set(ink, { scaleX: (i + 1) / N });
+        return;
+      }
+      // while playing itself the ink fills across the stage; on a click it jumps to the stage
+      const hold = Math.max(CONFIG.minHold, tl.duration() * 1000 + CONFIG.dwell) / 1000;
+      if (autoplay) {
+        gsap.set(ink, { scaleX: i / N });
+        inkTween = gsap.to(ink, { scaleX: (i + 1) / N, duration: hold, ease: "none" });
+        clearTimeout(timer);
+        if (i < N - 1) timer = setTimeout(() => autoplay && show(i + 1), hold * 1000);
+        else timer = setTimeout(() => logBox.classList.remove("is-live"), hold * 1000);
+      } else {
+        inkTween = gsap.to(ink, { scaleX: (i + 1) / N, duration: 0.6, ease: "power3.out" });
+      }
     }
 
-    function schedule(i, dur) {
-      clearTimeout(timer);
-      if (i >= N - 1) return;
-      timer = setTimeout(() => autoplay && show(i + 1), Math.max(CONFIG.minHold, dur * 1000 + CONFIG.dwell));
+    function startRun() {
+      if (reduced) return;
+      autoplay = true;
+      parked = false;
+      runClock = 0;
+      logList.textContent = "";
+      logBox.classList.add("is-live");
+      show(0, { force: true });
     }
 
     // ---- input: tabs (click + arrow keys), replay
     tabs.forEach((tab, i) => {
       tab.addEventListener("click", () => {
         stopAuto();
-        show(i);
+        show(i, { force: true });
       });
       tab.addEventListener("keydown", (e) => {
         const k = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
@@ -237,27 +302,50 @@
         const n = (i + k + N) % N;
         tabs[n].focus();
         stopAuto();
-        show(n);
+        show(n, { force: true });
       });
     });
-    $(".desk-replay", board).addEventListener("click", () => {
-      autoplay = !reduced;
-      show(0, { force: true });
-    });
+    $(".desk-replay", board).addEventListener("click", startRun);
 
-    // ---- first view: start with stage 1 and let it run itself
+    // ---- first paint: stage 1 finished, so a still screenshot reads fine
+    lockHeight();
     show(0, { instant: true });
-    // (stage 1 is in its finished state until the section is seen)
-    ScrollTrigger.create({
-      trigger: board,
-      start: "top 70%",
-      once: true,
-      onEnter: () => {
-        if (reduced) return;
-        autoplay = true;
-        show(0, { force: true });
-      },
+    log("sample run · ready", 0);
+    let rz = 0;
+    addEventListener("resize", () => {
+      clearTimeout(rz);
+      rz = setTimeout(lockHeight, 200);
     });
+    document.fonts?.ready.then(lockHeight);
+
+    // ---- plays itself once the stage itself is on screen; parks when you scroll away
+    let started = false;
+    ScrollTrigger.create({
+      trigger: stage,
+      start: "top 75%",
+      end: "bottom 25%",
+      onEnter: () => {
+        if (!started) {
+          started = true;
+          startRun();
+        } else if (parked) resume();
+      },
+      onEnterBack: () => parked && resume(),
+      onLeave: park,
+      onLeaveBack: park,
+    });
+    function park() {
+      if (!autoplay) return;
+      clearTimeout(timer);
+      tl?.pause();
+      inkTween?.pause();
+      parked = true;
+    }
+    function resume() {
+      parked = false;
+      // pick the stage up again from its start, so nothing is missed
+      show(cur, { force: true });
+    }
   }
 
   /* ------------------------------------------------------------------ planner */

@@ -410,27 +410,32 @@
         </div>
 
         <div class="desk-stage">
-          <p class="desk-sample mono"><span>Sample run</span> · illustrative notices, real rules</p>
-          <button class="desk-replay mono" type="button" data-cursor="link">↻ Replay</button>
-
           <!-- 01 SOURCE -->
           <div class="panel" role="tabpanel" id="panel-0" aria-labelledby="tab-0" tabindex="0">
-            <h3 class="panel-title">Finds every new care tender, daily.</h3>
-            <p class="panel-sub">It searches the e-tendering portal across care and support phrases, newest first, then judges each notice against the rules. Duplicates are caught before any work is spent.</p>
-            <ul class="notices">
-              <li class="notice" data-pick="1"><div><strong>Domiciliary care, 3-year framework</strong><span class="mono">County council · closes in 19 days</span></div><p class="why mono">Care service · closes in time</p><em class="tag mono">Picked</em></li>
-              <li class="notice" data-pick="0"><div><strong>Vehicle wash contract</strong><span class="mono">Borough council · closes in 26 days</span></div><p class="why mono">Not a care service</p><em class="tag mono">Skip</em></li>
-              <li class="notice" data-pick="0"><div><strong>Soft market test: supported accommodation</strong><span class="mono">NHS ICB · closes in 14 days</span></div><p class="why mono">Market engagement, not a tender</p><em class="tag mono">Skip</em></li>
-              <li class="notice" data-pick="0"><div><strong>Patient transport services</strong><span class="mono">NHS trust · closes in 5 days</span></div><p class="why mono">Closes in under 7 days</p><em class="tag mono">Skip</em></li>
-              <li class="notice" data-pick="1"><div><strong>Children&rsquo;s residential care</strong><span class="mono">Unitary authority · closes in 24 days</span></div><p class="why mono">Care service · closes in time</p><em class="tag mono">Picked</em></li>
-            </ul>
+            <div class="panel-copy">
+              <p class="panel-no mono">Stage 01 · Source</p>
+              <h3 class="panel-title">Finds every new care tender, daily.</h3>
+              <p class="panel-sub">It searches the e-tendering portal across eight care and support phrases, newest first, then judges each notice against the rules. Anything already on the site is caught before work is spent.</p>
+            </div>
+            <div class="panel-vis">
+              <ul class="notices">
+                <li class="notice" data-pick="1"><div><strong>Domiciliary care, 3-year framework</strong><span class="mono">County council · closes in 19 days</span></div><p class="why mono">Care service · in time</p><em class="tag mono">Picked</em></li>
+                <li class="notice" data-pick="0"><div><strong>Vehicle wash contract</strong><span class="mono">Borough council · closes in 26 days</span></div><p class="why mono">Not a care service</p><em class="tag mono">Skip</em></li>
+                <li class="notice" data-pick="0"><div><strong>Soft market test: supported accommodation</strong><span class="mono">NHS ICB · closes in 14 days</span></div><p class="why mono">Not a tender</p><em class="tag mono">Skip</em></li>
+                <li class="notice" data-pick="0"><div><strong>Patient transport services</strong><span class="mono">NHS trust · closes in 5 days</span></div><p class="why mono">Under 7 days</p><em class="tag mono">Skip</em></li>
+                <li class="notice" data-pick="1"><div><strong>Children&rsquo;s residential care</strong><span class="mono">Unitary authority · closes in 24 days</span></div><p class="why mono">Care service · in time</p><em class="tag mono">Picked</em></li>
+              </ul>
+            </div>
           </div>
 
           <!-- 02 READ -->
           <div class="panel" role="tabpanel" id="panel-1" aria-labelledby="tab-1" tabindex="0" hidden>
-            <h3 class="panel-title">Reads every document, so you don&rsquo;t have to.</h3>
-            <p class="panel-sub">Every file on the notice is downloaded, PDFs and Word and Excel files turned into text, then a facts digest is pulled out: deadlines, money, CQC, TUPE, lots, weightings.</p>
-            <div class="read">
+            <div class="panel-copy">
+              <p class="panel-no mono">Stage 02 · Read</p>
+              <h3 class="panel-title">Reads every document, so you don&rsquo;t have to.</h3>
+              <p class="panel-sub">Every file on the notice is downloaded. PDFs, Word and Excel files are turned into text, then a facts digest is pulled out: deadlines, money, CQC, TUPE, lots, weightings.</p>
+            </div>
+            <div class="panel-vis read">
               <ul class="files">
                 <li><i class="ext mono">PDF</i><span>Invitation to Tender</span><b class="mono">text ✓</b></li>
                 <li><i class="ext mono">DOCX</i><span>Service specification</span><b class="mono">text ✓</b></li>
@@ -455,52 +460,88 @@
 
           <!-- 03 WRITE -->
           <div class="panel" role="tabpanel" id="panel-2" aria-labelledby="tab-2" tabindex="0" hidden>
-            <h3 class="panel-title">Writes the eligibility form, and never guesses.</h3>
-            <p class="panel-sub">A 25-row overview and an 8-row pass/fail check, filled only from the buyer&rsquo;s own documents. Where something isn&rsquo;t stated, the form says so and flags it.</p>
-            <div class="form" role="table" aria-label="Tender Eligibility Form, sample rows">
-              <div class="frow frow--head mono" role="row"><span>Row</span><span>Answer</span><span>Status</span></div>
-              <div class="frow" role="row" data-fill="Thursday 26 November, 12:00. Clarifications close a week earlier."><strong>Deadline</strong><span class="fa"></span><em class="chip mono">Open</em></div>
-              <div class="frow" role="row" data-fill="£1,608,261 over the initial term, in whole pounds."><strong>Amount</strong><span class="fa"></span><em class="chip mono">Open</em></div>
-              <div class="frow" role="row" data-fill="Registration with the CQC is mandatory. No minimum rating stated."><strong>CQC requirement</strong><span class="fa"></span><em class="chip mono">Open</em></div>
-              <div class="frow" role="row" data-fill="Not specified in the documents read. Two documents give different levels."><strong>Insurance levels</strong><span class="fa"></span><em class="chip mono" data-flag>Open</em></div>
-              <div class="frow" role="row" data-fill="Pass/fail: all 14 mandatory questions answered. Word limits apply."><strong>Complete document set</strong><span class="fa"></span><em class="chip mono">Open</em></div>
-              <div class="frow" role="row" data-fill="Not labelled pass/fail. Mobilisation plan allowed."><strong>Office requirement</strong><span class="fa"></span><em class="chip mono">Open</em></div>
+            <div class="panel-copy">
+              <p class="panel-no mono">Stage 03 · Write</p>
+              <h3 class="panel-title">Writes the eligibility form, and never guesses.</h3>
+              <p class="panel-sub">A 25-row overview and an 8-row pass/fail check, filled only from the buyer&rsquo;s own documents. Every answer keeps its source. Where something isn&rsquo;t stated, the form says so and flags it.</p>
             </div>
-            <p class="matrix-total mono"><span>Form rows filled</span><b class="mt-n">0 / 33</b><i class="mt-bar"><b></b></i></p>
+            <div class="panel-vis">
+              <div class="form" role="table" aria-label="Tender Eligibility Form, sample rows">
+                <div class="frow frow--head mono" role="row"><span>Row</span><span>Answer</span><span>Source</span></div>
+                <div class="frow" role="row" data-fill="Thursday 26 November, 12:00. Clarifications close a week earlier." data-src="ITT 2.1"><strong>Deadline</strong><span class="fa"></span><em class="src mono"></em></div>
+                <div class="frow" role="row" data-fill="£1,608,261 over the initial term." data-src="Pricing"><strong>Amount</strong><span class="fa"></span><em class="src mono"></em></div>
+                <div class="frow" role="row" data-fill="CQC registration is mandatory. No minimum rating stated." data-src="Spec 4.3"><strong>CQC requirement</strong><span class="fa"></span><em class="src mono"></em></div>
+                <div class="frow" role="row" data-fill="Conflict: £5M in the ITT, £10M in the terms. Raise as a clarification." data-src="ITT ≠ T&amp;C" data-flag><strong>Insurance levels</strong><span class="fa"></span><em class="src mono"></em></div>
+                <div class="frow" role="row" data-fill="Pass/fail: all 14 mandatory questions answered." data-src="Q sets"><strong>Complete document set</strong><span class="fa"></span><em class="src mono"></em></div>
+                <div class="frow" role="row" data-fill="Not labelled pass/fail. A mobilisation plan is accepted." data-src="Spec 6.1"><strong>Office requirement</strong><span class="fa"></span><em class="src mono"></em></div>
+              </div>
+              <p class="matrix-total mono"><span>Form rows filled</span><b class="mt-n">0 / 33</b><i class="mt-bar"><b></b></i></p>
+            </div>
           </div>
 
           <!-- 04 VERIFY -->
           <div class="panel" role="tabpanel" id="panel-3" aria-labelledby="tab-3" tabindex="0" hidden>
-            <h3 class="panel-title">Checked against the source before anything is sent.</h3>
-            <p class="panel-sub">Every date and figure in the form is matched back to the tender documents. If the facts don&rsquo;t hold up, the draft doesn&rsquo;t go.</p>
-            <ul class="checks">
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Submission deadline has a readable date and time</span></li>
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Every figure and date matched to its source document</span></li>
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Money in whole pounds, no invented values</span></li>
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Closes at least 7 days from now</span></li>
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Gaps listed as missing fields, never filled in</span></li>
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Text inside documents treated as data, never as instructions</span></li>
-            </ul>
-            <p class="mock mono"><span>Gaps flagged for the approver</span><b class="mock-n">0</b><i>missing fields</i></p>
+            <div class="panel-copy">
+              <p class="panel-no mono">Stage 04 · Verify</p>
+              <h3 class="panel-title">Checked against the source before anything is sent.</h3>
+              <p class="panel-sub">Every date and figure in the form is matched back to the tender documents. If the facts don&rsquo;t hold up, the draft doesn&rsquo;t go.</p>
+              <p class="mock mono"><b class="mock-n">0</b><span>gaps flagged<br>for the approver</span></p>
+            </div>
+            <div class="panel-vis">
+              <ul class="checks">
+                <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Submission deadline has a readable date and time</span></li>
+                <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Every figure and date matched to its source document</span></li>
+                <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Money in whole pounds, no invented values</span></li>
+                <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Closes at least 7 days from now</span></li>
+                <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Gaps listed as missing fields, never filled in</span></li>
+                <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Text inside documents treated as data, never as instructions</span></li>
+              </ul>
+            </div>
           </div>
 
           <!-- 05 FILE -->
           <div class="panel" role="tabpanel" id="panel-4" aria-labelledby="tab-4" tabindex="0" hidden>
-            <h3 class="panel-title">Filed, then drafted on BidCentra for approval.</h3>
-            <p class="panel-sub">Documents and form are filed in a tidy folder, and a draft tender is created on bidcentra.co.uk. The pipeline can&rsquo;t publish or delete anything: a person approves.</p>
-            <div class="submit">
-              <div class="submit-stamp"><span class="stamp stamp--big mono">Ready for review</span></div>
-              <ul class="submit-lines mono">
-                <li><span>Drive folder</span><b>Filed</b></li>
-                <li><span>Eligibility form</span><b>Uploaded</b></li>
-                <li><span>Tender documents</span><b>Uploaded (zip)</b></li>
-                <li><span>Site draft</span><b>Created</b></li>
-                <li><span>Published by</span><b>A person</b></li>
-              </ul>
+            <div class="panel-copy">
+              <p class="panel-no mono">Stage 05 · File</p>
+              <h3 class="panel-title">Filed, then drafted on BidCentra for approval.</h3>
+              <p class="panel-sub">Documents and form are filed in a tidy folder, and a draft tender is created on bidcentra.co.uk. The pipeline can&rsquo;t publish or delete anything: a person approves.</p>
+            </div>
+            <div class="panel-vis">
+              <div class="draft">
+                <div class="draft-bar mono"><span class="draft-dot"></span>bidcentra.co.uk / admin / tenders <em>Ready for review</em></div>
+                <div class="draft-body">
+                  <p class="draft-kind mono">Health and Social Care · Domiciliary Care</p>
+                  <p class="draft-title">Domiciliary care, 3-year framework</p>
+                  <ul class="submit-lines mono">
+                    <li><span>Closes</span><b>Thu 26 Nov, 12:00</b></li>
+                    <li><span>Value</span><b>£1,608,261</b></li>
+                    <li><span>Eligibility form</span><b>Attached</b></li>
+                    <li><span>Tender documents</span><b>Attached (zip)</b></li>
+                    <li><span>Missing fields</span><b>2, flagged</b></li>
+                  </ul>
+                  <div class="draft-actions"><span class="draft-btn">Approve &amp; publish</span><span class="draft-who mono">needs a person</span></div>
+                </div>
+                <span class="stamp stamp--big mono">Ready for review</span>
+              </div>
             </div>
           </div>
         </div>
+
+        <div class="desk-log">
+          <p class="log-head mono" aria-hidden="true"><span class="log-led"></span>Run log <i>sample</i></p>
+          <ol class="log-lines mono" aria-hidden="true"></ol>
+          <button class="desk-replay mono" type="button" data-cursor="link">↻ Replay</button>
+        </div>
       </div>
+
+      <ul class="desk-specs mono" aria-label="The real pipeline's rules">
+        <li><b>8</b><span>care search phrases, every run</span></li>
+        <li><b>10</b><span>tenders taken per run, the rest queued</span></li>
+        <li><b>7 days</b><span>minimum before close, or it&rsquo;s skipped</span></li>
+        <li><b>33</b><span>rows in each eligibility form</span></li>
+        <li><b>0</b><span>tenders it can publish on its own</span></li>
+      </ul>
+      <p class="desk-proof"><a class="case-link mono" href="https://bidcentra.co.uk/tenders" target="_blank" rel="noopener" data-cursor="link">See the live tenders it feeds on bidcentra.co.uk ↗</a><span class="mono">Sample run above: illustrative notices, real rules.</span></p>
 
       <!-- BACK-PLANNER: a real, usable tool -->
       <div class="plan" id="plan">
