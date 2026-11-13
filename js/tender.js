@@ -9,9 +9,7 @@
   const CONFIG = {
     dwell: 1100,        // ms a stage rests after its timeline ends, when autoplaying
     minHold: 3600,      // ms a stage is held at minimum
-    verdictBid: 70,     // qualify score thresholds
     verdictMaybe: 50,
-    preset: [4, 4, 3, 4, 3], // the sample tender's qualify scores
     // back-planner: working days before the close, for a "medium" bid
     milestones: [
       ["Go / no-go decision", 14, "Score it on evidence. Walk away early if it's weak."],
@@ -50,7 +48,7 @@
     let tl = null;
     let timer = 0;
     let autoplay = false;
-    let sliderTween = null;
+    let sliderTween = null; // kept for show(); the pipeline has no live sliders any more
 
     const stopAuto = () => {
       autoplay = false;
@@ -64,158 +62,105 @@
       gsap.fromTo(stage, { y: 0 }, { y: 3, duration: 0.05, delay: 0.42, yoyo: true, repeat: 3, ease: "none", clearProps: "transform" });
     }
 
-    // ---- stage 1: sourcing
+    // ---- stage 1: find the notices, then judge each one against the rules
     function buildSource() {
       const rows = $$(".notice", board);
       const t = gsap.timeline();
       rows.forEach((row) => {
         row.classList.remove("is-pass", "is-pursue");
         gsap.set(row, { opacity: 0, y: 16 });
-        gsap.set($(".match-bar i", row), { scaleX: 0 });
+        gsap.set($(".why", row), { opacity: 0 });
         gsap.set($(".tag", row), { opacity: 0, scale: 0.6 });
-        $(".match-n", row).textContent = "0";
       });
+      rows.forEach((row, i) => t.to(row, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, i * 0.16));
+      // the decisions land one by one once everything has been read
       rows.forEach((row, i) => {
-        const m = +row.dataset.match;
-        const o = { v: 0 };
-        const at = i * 0.16;
-        t.to(row, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, at);
-        t.to($(".match-bar i", row), { scaleX: m / 100, duration: 0.9, ease: "power3.out" }, at + 0.15);
-        t.to(o, { v: m, duration: 0.9, ease: "power2.out", onUpdate: () => ($(".match-n", row).textContent = Math.round(o.v)) }, at + 0.15);
-      });
-      // the decision lands row by row after everything has been read
-      rows.forEach((row, i) => {
-        const pursue = +row.dataset.match >= 70;
-        t.add(() => row.classList.add(pursue ? "is-pursue" : "is-pass"), 1.9 + i * 0.12);
-        t.to($(".tag", row), { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 1.9 + i * 0.12);
+        const pick = row.dataset.pick === "1";
+        const at = 1.5 + i * 0.35;
+        t.add(() => row.classList.add(pick ? "is-pursue" : "is-pass"), at);
+        t.to($(".why", row), { opacity: 1, duration: 0.3 }, at);
+        t.to($(".tag", row), { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, at);
       });
       return t;
     }
 
-    // ---- stage 2: qualify (real sliders, live verdict)
-    const qs = $$(".qs", board);
-    const ring = $(".ring-fg", board);
-    const ringN = $(".serif-n", board);
-    const verdict = $(".verdict", board);
-    const stamp = $(".stamp", verdict);
-    const weak = $(".weak", board);
-    const R = 2 * Math.PI * 52;
-    ring.style.strokeDasharray = R;
-    ring.style.strokeDashoffset = R;
-    const NAMES = ["Sector fit", "Capability & references", "Competition", "Margin & price risk", "Time to deadline"];
-    let lastKind = "";
-
-    function qualScore() {
-      return qs.reduce((sum, el) => sum + (+$("input", el).value / 5) * +el.dataset.w, 0);
-    }
-    function paintQual(commit) {
-      qs.forEach((el) => {
-        const inp = $("input", el);
-        $(".qs-v", el).textContent = `${inp.value}/5`;
-        inp.style.setProperty("--p", `${(+inp.value / 5) * 100}%`);
+    // ---- stage 2: every document read, then the facts digest
+    function buildRead() {
+      const files = $$(".files li", board);
+      const lines = $$(".digest-lines li", board);
+      const n = $(".digest-n", board);
+      n.textContent = "0";
+      files.forEach((li) => {
+        gsap.set(li, { opacity: 0, x: -14 });
+        gsap.set($("b", li), { opacity: 0 });
       });
-      const s = qualScore();
-      ringN.textContent = Math.round(s);
-      ring.style.strokeDashoffset = R * (1 - s / 100);
-      const kind = s >= CONFIG.verdictBid ? "bid" : s >= CONFIG.verdictMaybe ? "maybe" : "no";
-      const label = { bid: "Bid", maybe: "Bid with conditions", no: "No-bid" }[kind];
-      verdict.dataset.v = kind;
-      stamp.textContent = label;
-      if (kind !== lastKind && commit) thud(stamp);
-      lastKind = kind;
-      // weakest link: lowest score, ties go to the heavier weight
-      let w = 0;
-      qs.forEach((el, i) => {
-        const a = +$("input", el).value, b = +$("input", qs[w]).value;
-        if (a < b || (a === b && +el.dataset.w > +qs[w].dataset.w)) w = i;
-      });
-      const lowest = +$("input", qs[w]).value;
-      weak.textContent = s <= 0 ? "" : lowest >= 4 ? "No weak spots. Go." : `Weakest link: ${NAMES[w]} (${lowest}/5). Fix it or walk away.`;
-    }
-    qs.forEach((el) => {
-      const inp = $("input", el);
-      inp.addEventListener("input", () => {
-        stopAuto();
-        sliderTween?.kill();
-        paintQual(false);
-      });
-      inp.addEventListener("change", () => paintQual(true));
-    });
-    function buildQualify() {
-      sliderTween?.kill();
-      const o = qs.map(() => ({ v: 0 }));
-      lastKind = "";
-      qs.forEach((el) => ($("input", el).value = 0));
-      paintQual(false);
+      gsap.set(lines, { opacity: 0, y: 8 });
       const t = gsap.timeline();
-      o.forEach((x, i) => {
-        t.to(x, {
-          v: CONFIG.preset[i],
-          duration: 0.85,
-          ease: "power3.out",
-          onUpdate: () => {
-            $("input", qs[i]).value = Math.round(x.v);
-            paintQual(false);
-          },
-        }, 0.2 + i * 0.28);
+      files.forEach((li, i) => {
+        t.to(li, { opacity: 1, x: 0, duration: 0.35, ease: "power3.out" }, 0.1 + i * 0.22);
+        t.to($("b", li), { opacity: 1, duration: 0.25 }, 0.45 + i * 0.22);
       });
-      t.add(() => paintQual(true), "+=0.05");
-      sliderTween = t;
+      const base = 0.2 + files.length * 0.22;
+      lines.forEach((li, i) => t.to(li, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, base + i * 0.2));
+      const o = { v: 0 };
+      t.to(o, { v: lines.length, duration: lines.length * 0.2, ease: "none", onUpdate: () => (n.textContent = Math.round(o.v)) }, base);
       return t;
     }
 
-    // ---- stage 3: shape (compliance matrix fills itself)
-    function buildShape() {
-      const rows = $$(".mrow:not(.mrow--head)", board);
-      const state = rows.map(() => 0);
+    // ---- stage 3: the eligibility form fills itself, gaps get flagged
+    function buildWrite() {
+      const rows = $$(".frow:not(.frow--head)", board);
       const totalN = $(".mt-n", board);
       const totalBar = $(".mt-bar b", board);
-      const paint = () => {
-        const avg = state.reduce((a, b) => a + b, 0) / state.length;
-        totalN.textContent = `${Math.round(avg * 100)}%`;
-        gsap.set(totalBar, { scaleX: avg });
+      const TOTAL = 33;
+      const paint = (v) => {
+        totalN.textContent = `${Math.round(v * TOTAL)} / ${TOTAL}`;
+        gsap.set(totalBar, { scaleX: v });
       };
       rows.forEach((row) => {
         const chip = $(".chip", row);
         chip.textContent = "Open";
         chip.dataset.s = "open";
-        $(".mwords", row).textContent = row.hasAttribute("data-price") ? "–" : `0 / ${row.dataset.cap}`;
-        gsap.set($(".mbar b", row), { scaleX: 0 });
+        $(".fa", row).textContent = "";
+        row.classList.remove("is-flag");
         gsap.set(row, { opacity: 0, y: 10 });
       });
-      state.fill(0);
-      paint();
+      paint(0);
       const t = gsap.timeline();
+      const prog = { v: 0 };
       rows.forEach((row, i) => {
+        const text = row.dataset.fill;
+        const flag = $(".chip", row).hasAttribute("data-flag");
         const o = { v: 0 };
-        const price = row.hasAttribute("data-price");
-        const words = +row.dataset.words;
-        const at = 0.15 + i * 0.42;
-        t.to(row, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, at);
+        const at = 0.15 + i * 0.55;
+        t.to(row, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, at);
+        t.add(() => {
+          $(".chip", row).dataset.s = "draft";
+          $(".chip", row).textContent = "Writing";
+        }, at + 0.1);
         t.to(o, {
           v: 1,
-          duration: 1.1,
-          ease: "power1.inOut",
-          onUpdate: () => {
-            state[i] = o.v;
-            const chip = $(".chip", row);
-            chip.dataset.s = o.v >= 1 ? "ready" : o.v > 0.02 ? "draft" : "open";
-            chip.textContent = o.v >= 1 ? "Ready" : o.v > 0.02 ? "Drafting" : "Open";
-            if (!price) $(".mwords", row).textContent = `${Math.round(o.v * words)} / ${row.dataset.cap}`;
-            gsap.set($(".mbar b", row), { scaleX: o.v });
-            paint();
-          },
+          duration: 0.9,
+          ease: "none",
+          onUpdate: () => ($(".fa", row).textContent = text.slice(0, Math.round(o.v * text.length))),
         }, at + 0.1);
+        t.add(() => {
+          const chip = $(".chip", row);
+          chip.dataset.s = flag ? "flag" : "ready";
+          chip.textContent = flag ? "Flagged" : "Filled";
+          row.classList.toggle("is-flag", flag);
+        }, at + 1.05);
       });
+      t.to(prog, { v: 1, duration: 0.15 + rows.length * 0.55 + 0.9, ease: "none", onUpdate: () => paint(prog.v) }, 0.1);
       return t;
     }
 
-    // ---- stage 4: review checklist + mock score
-    function buildReview() {
+    // ---- stage 4: verification checklist + gaps handed to the approver
+    function buildVerify() {
       const items = $$(".checks li", board);
       const path = (li) => $("path", li);
-      const mockN = $(".mock-n", board);
-      mockN.textContent = "0";
+      const gapN = $(".mock-n", board);
+      gapN.textContent = "0";
       items.forEach((li) => {
         li.classList.remove("is-ok");
         const p = path(li);
@@ -234,23 +179,23 @@
         t.to($("circle", li), { opacity: 1, duration: 0.2 }, at + 0.3);
       });
       const o = { v: 0 };
-      t.to(o, { v: 82, duration: 1, ease: "power2.out", onUpdate: () => (mockN.textContent = Math.round(o.v)) }, 0.2 + items.length * 0.5);
+      t.to(o, { v: 2, duration: 0.8, ease: "none", onUpdate: () => (gapN.textContent = Math.round(o.v)) }, 0.2 + items.length * 0.5);
       return t;
     }
 
-    // ---- stage 5: submit
-    function buildSubmit() {
+    // ---- stage 5: filed, drafted, waiting for a person
+    function buildFile() {
       const lines = $$(".submit-lines li", board);
       const st = $(".stamp--big", board);
       gsap.set(st, { opacity: 0 });
       gsap.set(lines, { opacity: 0, y: 10 });
       const t = gsap.timeline();
-      t.to(lines, { opacity: 1, y: 0, duration: 0.45, stagger: 0.14, ease: "power3.out" }, 0.1);
-      t.add(() => thud(st), 0.9);
+      t.to(lines, { opacity: 1, y: 0, duration: 0.45, stagger: 0.16, ease: "power3.out" }, 0.1);
+      t.add(() => thud(st), 1.1);
       return t;
     }
 
-    const builders = [buildSource, buildQualify, buildShape, buildReview, buildSubmit];
+    const builders = [buildSource, buildRead, buildWrite, buildVerify, buildFile];
 
     // ---- stage switching
     function show(i, { force = false, instant = false } = {}) {

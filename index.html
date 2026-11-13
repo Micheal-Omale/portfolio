@@ -341,8 +341,8 @@
           <span class="service-no mono">05</span>
           <h3>Bid support &amp; tender operations</h3>
           <div class="service-text">
-            <p>The other half of my work: finding, qualifying and tracking tenders, then helping bids get written, checked and submitted on time. I built the automation pipeline behind it, so the repetitive parts run themselves and the effort goes into the answers that score.</p>
-            <span class="service-tags mono">Tender sourcing · Bid support · Automation</span>
+            <p>The other half of my work. I built the pipeline behind BidCentra&rsquo;s live tenders: it finds new care tenders, reads every document, writes the Tender Eligibility Form and files a draft on the site for approval. Built so it never guesses a fact.</p>
+            <span class="service-tags mono">Tender sourcing · Eligibility forms · Automation</span>
             <span class="service-proof mono">Proof <a href="https://bidcentra.co.uk" target="_blank" rel="noopener" data-cursor="link">BidCentra ↗</a></span>
           </div>
           <span class="service-go" aria-hidden="true">→</span>
@@ -388,106 +388,114 @@
     </section>
 
     <!-- TENDER DESK: the bid-support half of the work, as a working demo -->
-    <section class="desk" id="desk" aria-label="The tender desk: a sample tender moving through the bid pipeline, and a bid back-planner">
+    <section class="desk" id="desk" aria-label="The BidCentra tender pipeline, shown on sample data, and a bid back-planner">
       <div class="sec-head sec-head--split">
         <div>
           <p class="eyebrow mono"><i>03</i> The tender desk</p>
-          <h2 data-reveal>From notice to submitted, with days to&nbsp;spare.</h2>
+          <h2 data-reveal>From portal to draft, read end to&nbsp;end.</h2>
         </div>
-        <p class="sec-note">Bid support is the other half of my work. This is the pipeline I built, running on a sample tender: click any stage and move the sliders. Then back-plan a real deadline of your own.</p>
+        <p class="sec-note">Bid support is the other half of my work. This is the pipeline I built for BidCentra: every day it finds new care tenders, reads every document, writes the eligibility form and files a draft on the site for a person to approve. Shown here on sample data; click any stage.</p>
       </div>
 
       <div class="desk-board" id="deskBoard">
         <div class="desk-top">
           <ol class="pipe" role="tablist" aria-label="Pipeline stages">
             <li><button class="pipe-tab" type="button" role="tab" id="tab-0" aria-controls="panel-0" data-cursor="link"><span class="mono">01</span><b>Source</b><i>Find &amp; filter</i></button></li>
-            <li><button class="pipe-tab" type="button" role="tab" id="tab-1" aria-controls="panel-1" data-cursor="link"><span class="mono">02</span><b>Qualify</b><i>Bid or no-bid</i></button></li>
-            <li><button class="pipe-tab" type="button" role="tab" id="tab-2" aria-controls="panel-2" data-cursor="link"><span class="mono">03</span><b>Shape</b><i>Map &amp; draft</i></button></li>
-            <li><button class="pipe-tab" type="button" role="tab" id="tab-3" aria-controls="panel-3" data-cursor="link"><span class="mono">04</span><b>Review</b><i>Red-team</i></button></li>
-            <li><button class="pipe-tab" type="button" role="tab" id="tab-4" aria-controls="panel-4" data-cursor="link"><span class="mono">05</span><b>Submit</b><i>Early, filed</i></button></li>
+            <li><button class="pipe-tab" type="button" role="tab" id="tab-1" aria-controls="panel-1" data-cursor="link"><span class="mono">02</span><b>Read</b><i>Every document</i></button></li>
+            <li><button class="pipe-tab" type="button" role="tab" id="tab-2" aria-controls="panel-2" data-cursor="link"><span class="mono">03</span><b>Write</b><i>Eligibility form</i></button></li>
+            <li><button class="pipe-tab" type="button" role="tab" id="tab-3" aria-controls="panel-3" data-cursor="link"><span class="mono">04</span><b>Verify</b><i>Check the facts</i></button></li>
+            <li><button class="pipe-tab" type="button" role="tab" id="tab-4" aria-controls="panel-4" data-cursor="link"><span class="mono">05</span><b>File</b><i>Draft for approval</i></button></li>
           </ol>
           <span class="pipe-track" aria-hidden="true"><span class="pipe-ink"></span></span>
         </div>
 
         <div class="desk-stage">
-          <p class="desk-sample mono"><span>Sample tender</span> · illustrative data, real method</p>
+          <p class="desk-sample mono"><span>Sample run</span> · illustrative notices, real rules</p>
           <button class="desk-replay mono" type="button" data-cursor="link">↻ Replay</button>
 
           <!-- 01 SOURCE -->
           <div class="panel" role="tabpanel" id="panel-0" aria-labelledby="tab-0" tabindex="0">
-            <h3 class="panel-title">Every notice read, so you don&rsquo;t have to.</h3>
-            <p class="panel-sub">New notices are pulled in, then scored against a sector profile: health &amp; social care, facilities, charities.</p>
+            <h3 class="panel-title">Finds every new care tender, daily.</h3>
+            <p class="panel-sub">It searches the e-tendering portal across care and support phrases, newest first, then judges each notice against the rules. Duplicates are caught before any work is spent.</p>
             <ul class="notices">
-              <li class="notice" data-match="94"><div><strong>Grounds &amp; estates maintenance, 3 years</strong><span class="mono">County council · £1.8M · closes in 19 days</span></div><div class="match"><b class="match-n mono">0</b><span class="match-bar"><i></i></span></div><em class="tag mono">Pursue</em></li>
-              <li class="notice" data-match="61"><div><strong>Domiciliary care framework</strong><span class="mono">NHS ICB · £6.2M · closes in 12 days</span></div><div class="match"><b class="match-n mono">0</b><span class="match-bar"><i></i></span></div><em class="tag mono">Pass</em></li>
-              <li class="notice" data-match="88"><div><strong>Cleaning &amp; facilities services</strong><span class="mono">Housing association · £720k · closes in 23 days</span></div><div class="match"><b class="match-n mono">0</b><span class="match-bar"><i></i></span></div><em class="tag mono">Pursue</em></li>
-              <li class="notice" data-match="22"><div><strong>Fleet vehicle leasing</strong><span class="mono">Borough council · £940k · closes in 9 days</span></div><div class="match"><b class="match-n mono">0</b><span class="match-bar"><i></i></span></div><em class="tag mono">Pass</em></li>
-              <li class="notice" data-match="79"><div><strong>Mental-health outreach services</strong><span class="mono">Charity partnership · £1.1M · closes in 27 days</span></div><div class="match"><b class="match-n mono">0</b><span class="match-bar"><i></i></span></div><em class="tag mono">Pursue</em></li>
+              <li class="notice" data-pick="1"><div><strong>Domiciliary care, 3-year framework</strong><span class="mono">County council · closes in 19 days</span></div><p class="why mono">Care service · closes in time</p><em class="tag mono">Picked</em></li>
+              <li class="notice" data-pick="0"><div><strong>Vehicle wash contract</strong><span class="mono">Borough council · closes in 26 days</span></div><p class="why mono">Not a care service</p><em class="tag mono">Skip</em></li>
+              <li class="notice" data-pick="0"><div><strong>Soft market test: supported accommodation</strong><span class="mono">NHS ICB · closes in 14 days</span></div><p class="why mono">Market engagement, not a tender</p><em class="tag mono">Skip</em></li>
+              <li class="notice" data-pick="0"><div><strong>Patient transport services</strong><span class="mono">NHS trust · closes in 5 days</span></div><p class="why mono">Closes in under 7 days</p><em class="tag mono">Skip</em></li>
+              <li class="notice" data-pick="1"><div><strong>Children&rsquo;s residential care</strong><span class="mono">Unitary authority · closes in 24 days</span></div><p class="why mono">Care service · closes in time</p><em class="tag mono">Picked</em></li>
             </ul>
           </div>
 
-          <!-- 02 QUALIFY -->
+          <!-- 02 READ -->
           <div class="panel" role="tabpanel" id="panel-1" aria-labelledby="tab-1" tabindex="0" hidden>
-            <h3 class="panel-title">Bid or no-bid, decided on evidence.</h3>
-            <p class="panel-sub">Five weighted questions. Drag them; the verdict is live. It&rsquo;s the same logic I use before any hours get spent.</p>
-            <div class="qual">
-              <div class="qual-sliders">
-                <label class="qs" data-w="25"><span class="qs-head"><strong>Sector fit</strong><b class="mono qs-v">0/5</b></span><span class="qs-hint">Have we won this kind of work?</span><input type="range" min="0" max="5" step="1" value="0" aria-label="Sector fit"></label>
-                <label class="qs" data-w="25"><span class="qs-head"><strong>Capability &amp; references</strong><b class="mono qs-v">0/5</b></span><span class="qs-hint">Can we evidence every requirement?</span><input type="range" min="0" max="5" step="1" value="0" aria-label="Capability and references"></label>
-                <label class="qs" data-w="15"><span class="qs-head"><strong>Competition</strong><b class="mono qs-v">0/5</b></span><span class="qs-hint">Is there an incumbent we can beat?</span><input type="range" min="0" max="5" step="1" value="0" aria-label="Competition"></label>
-                <label class="qs" data-w="20"><span class="qs-head"><strong>Margin &amp; price risk</strong><b class="mono qs-v">0/5</b></span><span class="qs-hint">Does the price work at their budget?</span><input type="range" min="0" max="5" step="1" value="0" aria-label="Margin and price risk"></label>
-                <label class="qs" data-w="15"><span class="qs-head"><strong>Time to deadline</strong><b class="mono qs-v">0/5</b></span><span class="qs-hint">Is there room to do it properly?</span><input type="range" min="0" max="5" step="1" value="0" aria-label="Time to deadline"></label>
-              </div>
-              <div class="qual-out" aria-live="polite">
-                <div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fg" cx="60" cy="60" r="52"/></svg><div class="ring-n"><b class="serif-n">0</b><span class="mono">/ 100</span></div></div>
-                <p class="verdict" data-v="no"><span class="stamp mono">No-bid</span></p>
-                <p class="weak mono"></p>
+            <h3 class="panel-title">Reads every document, so you don&rsquo;t have to.</h3>
+            <p class="panel-sub">Every file on the notice is downloaded, PDFs and Word and Excel files turned into text, then a facts digest is pulled out: deadlines, money, CQC, TUPE, lots, weightings.</p>
+            <div class="read">
+              <ul class="files">
+                <li><i class="ext mono">PDF</i><span>Invitation to Tender</span><b class="mono">text ✓</b></li>
+                <li><i class="ext mono">DOCX</i><span>Service specification</span><b class="mono">text ✓</b></li>
+                <li><i class="ext mono">PDF</i><span>Terms &amp; conditions</span><b class="mono">text ✓</b></li>
+                <li><i class="ext mono">XLSX</i><span>Pricing schedule</span><b class="mono">text ✓</b></li>
+                <li><i class="ext mono">XLSX</i><span>TUPE information</span><b class="mono">text ✓</b></li>
+                <li><i class="ext mono">TXT</i><span>Question sets</span><b class="mono">text ✓</b></li>
+              </ul>
+              <div class="digest">
+                <p class="digest-head mono"><span>Facts digest</span><b class="digest-n">0</b></p>
+                <ul class="digest-lines mono">
+                  <li><span>Deadline</span><b>Thu 26 Nov, 12:00</b></li>
+                  <li><span>Contract value</span><b>£1,608,261</b></li>
+                  <li><span>CQC</span><b>Registration required</b></li>
+                  <li><span>Lots</span><b>3</b></li>
+                  <li><span>Quality / price</span><b>60 / 40</b></li>
+                  <li><span>TUPE</span><b>Applies</b></li>
+                </ul>
               </div>
             </div>
           </div>
 
-          <!-- 03 SHAPE -->
+          <!-- 03 WRITE -->
           <div class="panel" role="tabpanel" id="panel-2" aria-labelledby="tab-2" tabindex="0" hidden>
-            <h3 class="panel-title">Every requirement mapped, owned, tracked.</h3>
-            <p class="panel-sub">The buyer&rsquo;s questions become a compliance matrix: weighting, owner, word limit, status. Nothing gets missed.</p>
-            <div class="matrix" role="table" aria-label="Compliance matrix">
-              <div class="mrow mrow--head mono" role="row"><span>Ref</span><span>Requirement</span><span>Weight</span><span>Owner</span><span>Words</span><span>Status</span></div>
-              <div class="mrow" role="row" data-words="480" data-cap="500"><span class="mono">Q1</span><strong>Method statement</strong><span class="mono">20%</span><span class="mono">MO</span><span class="mono mwords">0 / 500</span><em class="chip mono">Open</em><i class="mbar"><b></b></i></div>
-              <div class="mrow" role="row" data-words="392" data-cap="400"><span class="mono">Q2</span><strong>Mobilisation plan</strong><span class="mono">15%</span><span class="mono">MO</span><span class="mono mwords">0 / 400</span><em class="chip mono">Open</em><i class="mbar"><b></b></i></div>
-              <div class="mrow" role="row" data-words="296" data-cap="300"><span class="mono">Q3</span><strong>Quality assurance</strong><span class="mono">15%</span><span class="mono">Ops</span><span class="mono mwords">0 / 300</span><em class="chip mono">Open</em><i class="mbar"><b></b></i></div>
-              <div class="mrow" role="row" data-words="244" data-cap="250"><span class="mono">Q4</span><strong>Social value</strong><span class="mono">10%</span><span class="mono">MO</span><span class="mono mwords">0 / 250</span><em class="chip mono">Open</em><i class="mbar"><b></b></i></div>
-              <div class="mrow" role="row" data-words="348" data-cap="350"><span class="mono">Q5</span><strong>Risk &amp; continuity</strong><span class="mono">10%</span><span class="mono">Ops</span><span class="mono mwords">0 / 350</span><em class="chip mono">Open</em><i class="mbar"><b></b></i></div>
-              <div class="mrow" role="row" data-words="1" data-cap="1" data-price><span class="mono">Q6</span><strong>Pricing schedule</strong><span class="mono">30%</span><span class="mono">Fin</span><span class="mono mwords">&ndash;</span><em class="chip mono">Open</em><i class="mbar"><b></b></i></div>
+            <h3 class="panel-title">Writes the eligibility form, and never guesses.</h3>
+            <p class="panel-sub">A 25-row overview and an 8-row pass/fail check, filled only from the buyer&rsquo;s own documents. Where something isn&rsquo;t stated, the form says so and flags it.</p>
+            <div class="form" role="table" aria-label="Tender Eligibility Form, sample rows">
+              <div class="frow frow--head mono" role="row"><span>Row</span><span>Answer</span><span>Status</span></div>
+              <div class="frow" role="row" data-fill="Thursday 26 November, 12:00. Clarifications close a week earlier."><strong>Deadline</strong><span class="fa"></span><em class="chip mono">Open</em></div>
+              <div class="frow" role="row" data-fill="£1,608,261 over the initial term, in whole pounds."><strong>Amount</strong><span class="fa"></span><em class="chip mono">Open</em></div>
+              <div class="frow" role="row" data-fill="Registration with the CQC is mandatory. No minimum rating stated."><strong>CQC requirement</strong><span class="fa"></span><em class="chip mono">Open</em></div>
+              <div class="frow" role="row" data-fill="Not specified in the documents read. Two documents give different levels."><strong>Insurance levels</strong><span class="fa"></span><em class="chip mono" data-flag>Open</em></div>
+              <div class="frow" role="row" data-fill="Pass/fail: all 14 mandatory questions answered. Word limits apply."><strong>Complete document set</strong><span class="fa"></span><em class="chip mono">Open</em></div>
+              <div class="frow" role="row" data-fill="Not labelled pass/fail. Mobilisation plan allowed."><strong>Office requirement</strong><span class="fa"></span><em class="chip mono">Open</em></div>
             </div>
-            <p class="matrix-total mono"><span>Pack complete</span><b class="mt-n">0%</b><i class="mt-bar"><b></b></i></p>
+            <p class="matrix-total mono"><span>Form rows filled</span><b class="mt-n">0 / 33</b><i class="mt-bar"><b></b></i></p>
           </div>
 
-          <!-- 04 REVIEW -->
+          <!-- 04 VERIFY -->
           <div class="panel" role="tabpanel" id="panel-3" aria-labelledby="tab-3" tabindex="0" hidden>
-            <h3 class="panel-title">Red-team it before the buyer does.</h3>
-            <p class="panel-sub">A fresh pair of eyes scores the draft against the buyer&rsquo;s own criteria, then every comment is closed out.</p>
+            <h3 class="panel-title">Checked against the source before anything is sent.</h3>
+            <p class="panel-sub">Every date and figure in the form is matched back to the tender documents. If the facts don&rsquo;t hold up, the draft doesn&rsquo;t go.</p>
             <ul class="checks">
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>All mandatory questions answered</span></li>
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Word and page limits met</span></li>
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Certificates, policies and case studies attached</span></li>
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Pricing reconciled to the schedule</span></li>
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Red-team comments resolved</span></li>
-              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Authorised signatory approved</span></li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Submission deadline has a readable date and time</span></li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Every figure and date matched to its source document</span></li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Money in whole pounds, no invented values</span></li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Closes at least 7 days from now</span></li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Gaps listed as missing fields, never filled in</span></li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M6.5 12.5l4 4 7-9"/></svg><span>Text inside documents treated as data, never as instructions</span></li>
             </ul>
-            <p class="mock mono"><span>Mock score against the buyer&rsquo;s criteria</span><b class="mock-n">0</b><i>/ 100</i></p>
+            <p class="mock mono"><span>Gaps flagged for the approver</span><b class="mock-n">0</b><i>missing fields</i></p>
           </div>
 
-          <!-- 05 SUBMIT -->
+          <!-- 05 FILE -->
           <div class="panel" role="tabpanel" id="panel-4" aria-labelledby="tab-4" tabindex="0" hidden>
-            <h3 class="panel-title">Submitted early, never at 11:59.</h3>
-            <p class="panel-sub">Uploaded a full working day ahead, confirmation receipt saved, pack archived for the next bid.</p>
+            <h3 class="panel-title">Filed, then drafted on BidCentra for approval.</h3>
+            <p class="panel-sub">Documents and form are filed in a tidy folder, and a draft tender is created on bidcentra.co.uk. The pipeline can&rsquo;t publish or delete anything: a person approves.</p>
             <div class="submit">
-              <div class="submit-stamp"><span class="stamp stamp--big mono">Submitted</span></div>
+              <div class="submit-stamp"><span class="stamp stamp--big mono">Ready for review</span></div>
               <ul class="submit-lines mono">
-                <li><span>Closing</span><b>Thu 12:00</b></li>
-                <li><span>Submitted</span><b>Tue 15:42</b></li>
-                <li><span>Buffer</span><b>2 days 20 h</b></li>
-                <li><span>Receipt</span><b>Saved &amp; archived</b></li>
+                <li><span>Drive folder</span><b>Filed</b></li>
+                <li><span>Eligibility form</span><b>Uploaded</b></li>
+                <li><span>Tender documents</span><b>Uploaded (zip)</b></li>
+                <li><span>Site draft</span><b>Created</b></li>
+                <li><span>Published by</span><b>A person</b></li>
               </ul>
             </div>
           </div>
@@ -569,7 +577,7 @@
         </div>
         <div class="about">
           <p class="about-lede" data-reveal>I wrote my first website in 2020 and haven't stopped shipping since. Today I build complete products — front end, back end, AI and the bits in between — for founders, schools, agencies and studios.</p>
-          <p class="about-note" data-reveal>Alongside the code, I work in bid support and tender operations, running a tender automation pipeline that keeps opportunities, deadlines and submissions moving. What I care about: interfaces that feel good to use, AI that does real work, and pages that load before you've finished blinking.</p>
+          <p class="about-note" data-reveal>Alongside the code, I work in bid support and tender operations, running the tender pipeline behind BidCentra: it sources new tenders, writes the eligibility form and uploads the draft to the site. What I care about: interfaces that feel good to use, AI that does real work, and pages that load before you've finished blinking.</p>
         </div>
       </div>
 
